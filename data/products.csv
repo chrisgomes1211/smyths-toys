@@ -1,0 +1,77 @@
+sku,name,category,age_range,price,stock,rating,description,tags
+LE-001,LEGO City Fire Station,LEGO & Building,5+,79.99,25,4.7,"Fully equipped fire station with truck, helicopter, and 6 minifigures for rescue action.",LEGO,city,fire,rescue,minifigures,building
+LE-002,LEGO Technic Porsche 911,LEGO & Building,10+,149.99,12,4.9,"Detailed 1,580-piece Porsche 911 RSR replica with working steering and suspension.",LEGO,technic,porsche,cars,engineering,model
+LE-003,LEGO Creator Medieval Castle,LEGO & Building,8+,109.99,8,4.6,"3-in-1 medieval castle with tower, drawbridge, horse cart and 3 minifigures.",LEGO,creator,castle,medieval,3in1,knights
+LE-004,LEGO Duplo Farm,LEGO & Building,2+,44.99,30,4.8,"Large Duplo farm set with animals, tractor, farmer and barn for little builders.",LEGO,duplo,farm,animals,toddler,preschool
+LE-005,LEGO Friends Beach House,LEGO & Building,6+,64.99,18,4.5,"Heartlake City beach house with pool, waterslide, kayak and 3 Friends minidolls.",LEGO,friends,beach,house,pool,summer
+LE-006,LEGO Star Wars Millennium Falcon,LEGO & Building,8+,169.99,7,4.9,"Iconic 1,414-piece Millennium Falcon with Han Solo, Chewbacca and Rey minifigures.",LEGO,starwars,millenniumfalcon,spaceship,minifigures
+LE-007,LEGO Harry Potter Hogwarts Castle,LEGO & Building,9+,139.99,10,4.8,"Hogwarts Castle model with 3,010 pieces, 10 minifigures and 5 owl figurines.",LEGO,harrypotter,hogwarts,castle,wizard,magic
+LE-008,LEGO Icons Vespa 125,LEGO & Building,18+,99.99,6,4.7,"Authentic Vespa 125 replica in pastel blue with helmet, basket and flower bouquet.",LEGO,icons,vespa,scooter,adult,display
+LE-009,LEGO Speed Champions Lamborghini,LEGO & Building,7+,24.99,42,4.6,"Buildable Lamborghini Countach with driver minifigure and racing helmet.",LEGO,speed,champions,lamborghini,racing,car
+LE-010,LEGO Minecraft The Cave,LEGO & Building,7+,34.99,22,4.5,"Minecraft cave adventure with Steve, zombie, spider and exploding Creeper figures.",LEGO,minecraft,cave,steve,creeper,survival
+LE-011,LEGO Disney Princess Castle,LEGO & Building,5+,74.99,15,4.7,"Enchanted Disney castle with Cinderella, Ariel, Tiana and 4 other mini-dolls.",LEGO,disney,princess,castle,dolls,fairytale
+LE-012,LEGO Marvel Avengers Tower,LEGO & Building,8+,99.99,9,4.8,"Avengers Tower with Iron Man, Captain America, Thor, Black Widow and Hulk.",LEGO,marvel,avengers,tower,superheroes,minifigures
+LE-013,LEGO Architecture London Skyline,LEGO & Building,12+,54.99,20,4.6,"Build London landmarks including Big Ben, Tower Bridge and the London Eye.",LEGO,architecture,london,skyline,landmarks,display
+LE-014,LEGO Classic Creative Box,LEGO & Building,4+,34.99,45,4.8,"500-piece brick box with 35 colours and 2 baseplates for endless creativity.",LEGO,classic,creative,bricks,building,starter
+ACT-001,Marvel Spider-Man Action Figure,Action Figures & Dolls,5+,24.99,35,4.6,"12-inch Spider-Man figure with web-shooting action and 15 articulated joints.",marvel,spiderman,actionfigure,superhero,articulated
+ACT-002,Barbie Dreamhouse Playset,Action Figures & Dolls,3+,119.99,11,4.7,"Three-storey Dreamhouse with 10 rooms, elevator, slide and 25 accessories.",barbie,dreamhouse,dollhouse,fashion,playset,accessories
+ACT-003,Bluey Family Home Playset,Action Figures & Dolls,3+,39.99,28,4.9,"Bluey family home with 4 rooms, Bluey, Bingo, Chilli and Bandit figures.",bluey,heeler,family,home,playset,australian
+ACT-004,Pokémon Battle Figure Set,Action Figures & Dolls,5+,19.99,40,4.5,"Set of 6 Pokémon figures including Pikachu, Charizard, Eevee and Mewtwo.",pokemon,battle,figures,pikachu,charizard,collectible
+ACT-005,PAW Patrol Adventure Bay Set,Action Figures & Dolls,3+,49.99,20,4.8,"Complete Adventure Bay set with Chase, Marshall, Skye, Rubble and Zuma.",pawpatrol,adventure,bay,puppies,rescue,chase
+ACT-006,Hot Wheels 20-Car Gift Pack,Action Figures & Dolls,4+,19.99,50,4.5,"20 assorted Hot Wheels die-cast cars in a reusable storage case.",hotwheels,cars,diecast,racing,collection,giftpack
+ACT-007,Disney Frozen Elsa & Anna Dolls,Action Figures & Dolls,3+,29.99,22,4.7,"Frozen II fashion dolls with Elsa and Anna in authentic movie costumes.",disney,frozen,elsa,anna,dolls,fashion
+ACT-008,DC Batman Figure,Action Figures & Dolls,5+,22.99,18,4.5,"12-inch Batman figure with cape, grappling hook and 14 points of articulation.",dc,batman,actionfigure,gotham,superhero,articulated
+ACT-009,CoComelon JJ Figure Set,Action Figures & Dolls,1+,14.99,38,4.6,"JJ, TomTom and YoYo figures with 5 accessories from the CoComelon world.",cocomelon,jj,tomtom,yoyo,figures,preschool
+ACT-010,My Little Pony Friendship Castle,Action Figures & Dolls,4+,44.99,14,4.6,"Friendship Castle with Twilight Sparkle, Rainbow Dash and Pinkie Pie ponies.",mylittlepony,pony,castle,friendship,rainbowdash,sparkle
+BRD-001,Monopoly Dublin Edition,Board Games & Puzzles,8+,34.99,32,4.7,"Trade Dublin landmarks from Trinity College to Temple Bar in this city edition.",monopoly,dublin,boardgame,property,trading,ireland
+BRD-002,Scrabble Original,Board Games & Puzzles,10+,29.99,27,4.8,"Classic word game with wooden tiles, board and letter racks for 2-4 players.",scrabble,wordgame,classic,family,spelling,boardgame
+BRD-003,Jenga Classic,Board Games & Puzzles,6+,19.99,44,4.6,"Wooden block stacking game. Pull a block, place it on top without toppling the tower.",jenga,stacking,blocks,party,family,dexterity
+BRD-004,Master Chess Set,Board Games & Puzzles,7+,24.99,15,4.5,"Wooden chess set with weighted pieces, felted bases and folding board.",chess,strategy,wooden,classic,twoplayer,boardgame
+BRD-005,1000-Piece Irish Landscape Puzzle,Board Games & Puzzles,10+,14.99,36,4.7,"Stunning aerial photograph of the Cliffs of Moher in a 1000-piece jigsaw.",puzzle,jigsaw,1000pieces,cliffs,moher,ireland
+BRD-006,UNO Classic Card Game,Board Games & Puzzles,7+,9.99,48,4.6,"Fast-paced family card game with action cards including Skip, Reverse and Wild.",uno,cards,family,party,classic,fastpaced
+BRD-007,Cluedo Mystery Game,Board Games & Puzzles,8+,26.99,21,4.5,"Solve the murder mystery in Tudor Manor with 6 suspects, weapons and rooms.",cluedo,mystery,detective,whodunnit,murder,boardgame
+BRD-008,Risk Global Domination,Board Games & Puzzles,10+,34.99,9,4.4,"Conquer the world in this strategy board game with 6 armies and 42 territories.",risk,strategy,war,territory,boardgame,conquest
+BRD-009,Ravensburger 4-Puzzle Set,Board Games & Puzzles,4+,16.99,30,4.6,"Set of 4 progressive puzzles with 12, 16, 20 and 24 pieces for toddlers.",puzzle,ravensburger,progressive,toddler,animals,set
+BRD-010,Irish Card Game 45,Board Games & Puzzles,8+,12.99,17,4.5,"Traditional Irish card game 45 with rules booklet and premium playing cards.",cards,irish,45,traditional,family,party
+ART-001,Crayola 152-Piece Art Set,Arts & Crafts,5+,29.99,35,4.7,"Massive art case with crayons, markers, coloured pencils, paints and paper.",crayola,artset,crayons,markers,coloring,creative
+ART-002,Play-Doh 24-Can Variety Pack,Arts & Crafts,2+,19.99,40,4.6,"24 assorted Play-Doh cans with 12 colours and 8 cutters and tools.",playdoh,clay,modelling,colours,creative,preschool
+ART-003,Acrylic Paint Studio Set,Arts & Crafts,8+,34.99,12,4.5,"24 acrylic paint pots with 6 brushes, 3 canvases and a colour mixing guide.",acrylic,paint,art,studio,canvases,brushes
+ART-004,A3 Drawing Pad & Sketch Set,Arts & Crafts,6+,14.99,28,4.6,"A3 spiral-bound sketch pad with 12 graphite pencils, eraser and sharpener.",drawing,sketch,pad,pencils,art,portfolio
+ART-005,Ultimate Craft Activity Kit,Arts & Crafts,5+,24.99,19,4.5,"Over 1,000 craft pieces including pom-poms, pipe cleaners, googly eyes and glue.",craft,activity,kid,mixed,DIY,creative
+ART-006,DAS Modelling Clay 1kg,Arts & Crafts,6+,11.99,23,4.4,"Air-hardening modelling clay in natural terracotta, ideal for sculpture projects.",modelling,clay,sculpture,terracotta,airhardening,DAS
+ART-007,My First Sewing Kit,Arts & Crafts,6+,16.99,31,4.5,"Child-safe sewing kit with fabric squares, felt, thread, needles and instructions.",sewing,craft,needlework,fabric,kid,starter
+ART-008,Hama Bead Mega Bucket,Arts & Crafts,5+,22.99,26,4.7,"10,000 Hama beads in 30 colours with 4 pegboards and ironing paper.",hama,beads,mosaic,bucket,patterns,creative
+OUT-001,12FT Trampoline with Enclosure,Outdoor & Sports,6+,199.99,5,4.7,"12-foot trampoline with safety net enclosure, ladder and weather-resistant mat.",trampoline,jumping,outdoor,garden,safety,fun
+OUT-002,Razor A3 Kick Scooter,Outdoor & Sports,6+,69.99,14,4.6,"Lightweight aluminium scooter with 200mm wheels, rear brake and adjustable handlebars.",scooter,razor,kick,outdoor,foldable,kids
+OUT-003,Size 4 Football,Outdoor & Sports,0,14.99,42,4.5,"FIFA-approved size 4 football with machine-stitched PU cover and butyl bladder.",football,soccer,size4,outdoor,sport,FIFA
+OUT-004,Basketball Hoop & Stand,Outdoor & Sports,5+,59.99,10,4.4,"Adjustable basketball hoop with 1.5m backboard, stand and inflatable ball.",basketball,hoop,stand,adjustable,outdoor,backboard
+OUT-005,RoyalBaby 16-Inch Kids Bike,Outdoor & Sports,3+,89.99,8,4.6,"16-inch kids bike with training wheels, chain guard, bell and adjustable seat.",bike,royalbaby,cycling,training,wheels,kids
+OUT-006,Cruiser Skateboard Complete,Outdoor & Sports,8+,39.99,16,4.5,"27-inch maple cruiser skateboard with kicktail, ABEC 7 bearings and LED wheels.",skateboard,cruiser,maple,led,wheels,complete
+OUT-007,Rainbow Delta Kite,Outdoor & Sports,4+,12.99,34,4.3,"Large rainbow delta kite with 50m line, carry bag and easy-launch design.",kite,rainbow,delta,outdoor,flying,wind
+OUT-008,Frisbee Ultimate Disc,Outdoor & Sports,5+,6.99,48,4.2,"Professional 175g ultimate frisbee disc in bright orange with grip edge.",frisbee,disc,ultimate,outdoor,throwing,park
+BAB-001,Fisher-Price Laugh & Learn Chair,Baby & Toddler,12-24m,34.99,20,4.8,"Interactive baby chair with songs, phrases and lights teaching ABCs and 123s.",fisherprice,laugh,learn,baby,chair,interactive
+BAB-002,VTech Touch & Learn Elephant,Baby & Toddler,6-12m,22.99,27,4.7,"Soft elephant book with 4 interactive pages teaching animals, colours and music.",vtech,touch,learn,elephant,baby,book
+BAB-003,Sensory Soft Play Cube Set,Baby & Toddler,0-12m,24.99,15,4.6,"Set of 6 textured soft play cubes with rattles, crinkles, squeakers and mirror.",sensory,softplay,cubes,baby,textures,exploration
+BAB-004,Activity Walker & Music Centre,Baby & Toddler,9-24m,49.99,11,4.7,"2-in-1 walker and activity table with lights, sounds, piano keys and rollers.",walker,activity,music,baby,piano,developmental
+BAB-005,Eco-Friendly Rattle Set,Baby & Toddler,0-12m,12.99,33,4.5,"Set of 3 wooden rattles in natural finish with different sounds and textures.",rattle,wooden,eco,baby,sounds,grasping
+BAB-006,Stacking Rainbow Rings,Baby & Toddler,12-24m,9.99,40,4.6,"Classic stacking ring toy with 6 colourful rings and wobble base.",stacking,rings,rainbow,baby,classic,handeye
+BAB-007,Soft Building Blocks Set,Baby & Toddler,6-18m,16.99,36,4.5,"12 soft fabric blocks with numbers, animals, shapes and crinkle textures.",blocks,soft,baby,fabric,numbers,animals
+BAB-008,Baby Gym Play Mat with Toys,Baby & Toddler,0-12m,54.99,9,4.7,"Large play mat with arch and 5 hanging toys including mirror, rattle and teether.",baby,gym,playmat,sensory,tummy,time
+RCC-001,Remote Control Monster RC Car,Remote Control,6+,44.99,25,4.5,"4WD monster truck with 2.4GHz remote, rechargeable battery and 30-minute runtime.",remote,control,monster,truck,4WD,offroad
+RCC-002,HD Camera Drone with GPS,Remote Control,14+,149.99,6,4.6,"GPS drone with 4K camera, 25-minute flight time, return-to-home and follow-me.",drone,camera,GPS,4K,flying,foldable
+RCC-003,RC Helicopter with Gyro,Remote Control,8+,39.99,14,4.4,"3-channel RC helicopter with 6-axis gyro, LED lights and USB charging.",helicopter,remote,gyro,LED,indoor,beginner
+RCC-004,RC Speed Boat,Remote Control,8+,34.99,11,4.5,"High-speed RC boat with dual motors, 25km/h top speed and self-righting hull.",boat,remote,speed,waterproof,racing,selfrighting
+RCC-005,RC Battle Tank,Remote Control,8+,54.99,7,4.6,"Military tank replica with 360-degree turret, sound effects and airsoft BB firing.",tank,remote,military,battle,sounds,airsoft
+RCC-006,RC Stunt Car 360 Rotation,Remote Control,6+,29.99,19,4.4,"360-degree spinning stunt car with LED lights, music and 2.4GHz proportional control.",stunt,car,360,spinning,LED,stunts
+SCI-001,National Geographic Microscope Set,Science & Learning,8+,54.99,13,4.8,"40x-640x microscope with prepared slides, tools, and a learning guide.",microscope,natgeo,science,slides,experiments,kids
+SCI-002,Sphero BOLT Coding Robot,Science & Learning,8+,149.99,4,4.7,"Programmable robotic ball with LED matrix, sensors and 2-hour battery life.",sphero,bolt,robot,coding,STEM,programmable
+SCI-003,Illuminated Globe of the World,Science & Learning,5+,39.99,21,4.6,"30cm illuminated globe with political and physical map modes and LED base.",globe,world,illuminated,map,geography,nightlight
+SCI-004,Children's Chemistry Lab Set,Science & Learning,10+,34.99,10,4.5,"20-piece chemistry set with test tubes, beakers, goggles and 15 experiments.",chemistry,lab,experiments,science,STEM,testtubes
+SCI-005,Telescope for Kids,Science & Learning,8+,69.99,8,4.5,"60mm aperture telescope with 50x-200x magnification, tripod and finderscope.",telescope,space,astronomy,stars,moon,kids
+SCI-006,6-in-1 STEM Science Kit,Science & Learning,6+,29.99,29,4.6,"Build a volcano, slime, crystal, solar system, motor and kaleidoscope.",STEM,science,kit,volcano,slime,experiments
+SFT-001,Squishmallows 12-Inch Plush,Soft Toys & Plush,3+,19.99,38,4.8,"Ultra-soft Squishmallows plush in assorted characters with marshmallow texture.",squishmallows,plush,soft,cuddly,marshmallow,collectible
+SFT-002,Classic Teddy Bear 30cm,Soft Toys & Plush,0,14.99,45,4.7,"Traditional 30cm brown teddy bear with bow tie, safety eyes and washable fur.",teddy,bear,classic,traditional,soft,cuddly
+SFT-003,Rainbow Unicorn Plush,Soft Toys & Plush,2+,24.99,17,4.6,"Large 40cm unicorn plush with rainbow mane, gold horn and sparkly hooves.",unicorn,rainbow,plush,magical,sparkle,fantasy
+SFT-004,Fluffy Cat Plush Toy,Soft Toys & Plush,0,16.99,29,4.5,"Super-soft 25cm ginger cat plush with purring sound when you squeeze its tummy.",cat,plush,ginger,fluffy,sound,cuddly
+SFT-005,Baby Elephant Plush 35cm,Soft Toys & Plush,0,22.99,13,4.7,"Adorable 35cm grey elephant plush with floppy ears, embroidered eyes and trunk.",elephant,plush,baby,grey,soft,cuddle
+SFT-006,Green Dinosaur Plush 50cm,Soft Toys & Plush,2+,27.99,0,4.5,"Large 50cm green T-Rex plush with felt teeth, stitched claws and roars sound.",dinosaur,Trex,plush,green,roars,large
