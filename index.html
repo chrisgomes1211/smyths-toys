@@ -3,188 +3,217 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="Smyths Toys chatbot powered by Groq AI with synthetic product, order and training data.">
-<title>Smyths Toys · Concierge Bot</title>
+<meta name="description" content="Smyths Toys chatbot — Ireland's favourite toy store assistant. Find toys, track orders, get gift ideas.">
+<title>Smyths Toys · Toy Assistant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#1B3A5C;color:#2C2C2C;height:100vh;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:#ED1C24;color:#231F20;height:100vh;overflow:hidden}
 button{cursor:pointer;font-family:inherit}
 img{max-width:100%;display:block}
 
 /* ── Loading screen ── */
-#loading{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#1B3A5C,#2a5080);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease}
+#loading{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#ED1C24,#c4161e);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease}
 #loading.hide{opacity:0;pointer-events:none}
-.loading-icon{font-size:3rem;color:#FFD166;animation:bounce 1.2s ease-in-out infinite}
-.loading-icon span{display:inline-block;animation:spin 2s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-12px)}}
-.loading-text{color:#FFD166;font-family:'Playfair Display',serif;font-size:1.3rem;margin-top:16px;letter-spacing:1px}
-.loading-sub{color:rgba(255,209,102,.6);font-size:.8rem;margin-top:8px}
-.loading-bar{width:180px;height:2px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:20px;overflow:hidden}
-.loading-bar-inner{height:100%;width:0;background:linear-gradient(90deg,#FFD166,#E63946);border-radius:2px;animation:loadBar 1.2s ease forwards}
+.loading-icon{font-size:3.5rem;animation:floatToy 2s ease-in-out infinite}
+.loading-icon .toy-box{display:inline-block;animation:spinToy 3s linear infinite}
+@keyframes spinToy{to{transform:rotate(360deg)}}
+@keyframes floatToy{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.loading-text{color:#FBEA07;font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;margin-top:12px;letter-spacing:.5px}
+.loading-sub{color:rgba(255,255,255,.7);font-size:.85rem;margin-top:6px;font-weight:500}
+.loading-bar{width:200px;height:4px;background:rgba(255,255,255,.15);border-radius:4px;margin-top:22px;overflow:hidden}
+.loading-bar-inner{height:100%;width:0;background:linear-gradient(90deg,#FBEA07,#fff);border-radius:4px;animation:loadBar 1.4s ease forwards}
 @keyframes loadBar{to{width:100%}}
+.loading-toys{position:absolute;font-size:1.5rem;opacity:.3;pointer-events:none}
+.loading-toys.t1{top:12%;left:10%;animation:floatDrift 4s ease-in-out infinite}
+.loading-toys.t2{top:25%;right:12%;animation:floatDrift 5s ease-in-out infinite .5s}
+.loading-toys.t3{bottom:20%;left:15%;animation:floatDrift 4.5s ease-in-out infinite 1s}
+.loading-toys.t4{bottom:30%;right:10%;animation:floatDrift 3.5s ease-in-out infinite .3s}
+@keyframes floatDrift{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-18px) rotate(5deg)}66%{transform:translateY(-8px) rotate(-3deg)}}
 
 /* ── Layout ── */
 #app{display:flex;height:100vh;width:100vw}
-#left{flex:1;display:flex;flex-direction:column;min-width:0;background:#f8f6f3}
-#right{width:400px;display:flex;flex-direction:column;background:#fff;border-left:1px solid rgba(0,0,0,.06);flex-shrink:0}
+#left{flex:1;display:flex;flex-direction:column;min-width:0;background:#F5F3F0}
+#right{width:420px;display:flex;flex-direction:column;background:#fff;border-left:3px solid #ED1C24;flex-shrink:0}
 @media(max-width:900px){#right{display:none}}
 
 /* ── Header ── */
-#header{background:linear-gradient(135deg,#1B3A5C,#2a5080);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0;position:relative}
-#header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#FFD166 30%,#E63946 70%,transparent)}
-#avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#E63946,#FFD166);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2);transition:transform .25s}
+#header{background:linear-gradient(135deg,#ED1C24,#c4161e);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0;position:relative}
+#header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#FBEA07 20%,#FBEA07 80%,transparent)}
+#avatar{width:42px;height:42px;border-radius:50%;background:#FBEA07;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;color:#ED1C24;box-shadow:0 3px 10px rgba(0,0,0,.25);transition:transform .25s}
+#avatar i{filter:drop-shadow(0 1px 2px rgba(0,0,0,.1))}
 #avatar.talk{animation:avatarTalk .35s ease}
-@keyframes avatarTalk{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.08) rotate(-3deg)}50%{transform:scale(1.08) rotate(3deg)}}
-#store-name{color:#fff;font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;line-height:1.2}
-#store-sub{color:rgba(255,255,255,.5);font-size:.65rem;display:flex;align-items:center;gap:4px}
-#store-sub i{font-size:8px;color:#FFD166}
-#tagline{color:rgba(255,209,102,.8);font-size:.73rem;margin-left:auto;transition:opacity .35s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;text-align:right;font-weight:400}
+@keyframes avatarTalk{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.1) rotate(-4deg)}50%{transform:scale(1.1) rotate(4deg)}}
+#store-name{color:#FBEA07;font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;line-height:1.2;letter-spacing:.3px}
+#store-sub{color:rgba(255,255,255,.6);font-size:.65rem;display:flex;align-items:center;gap:4px}
+#store-sub i{font-size:8px;color:#FBEA07}
+#tagline{color:rgba(255,255,255,.85);font-size:.72rem;margin-left:auto;transition:opacity .35s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;text-align:right;font-weight:500}
 #tagline.fade{opacity:0}
 
 /* ── Pills ── */
-#pills{display:flex;gap:6px;padding:8px 16px;flex-wrap:wrap;flex-shrink:0;border-bottom:1px solid rgba(0,0,0,.04);background:#f8f6f3}
-.pill{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:18px;border:1px solid rgba(230,57,70,.25);background:rgba(230,57,70,.05);color:#1B3A5C;font-size:.72rem;font-weight:500;transition:all .2s;white-space:nowrap}
-.pill:hover{background:#E63946;color:#fff;border-color:#E63946;transform:translateY(-1px);box-shadow:0 2px 8px rgba(230,57,70,.2)}
-.pill i{font-size:.78rem;width:14px;text-align:center}
+#pills{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap;flex-shrink:0;border-bottom:2px solid rgba(237,28,36,.08);background:#F5F3F0}
+.pill{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:2px solid #ED1C24;background:#fff;color:#ED1C24;font-size:.73rem;font-weight:700;transition:all .2s;white-space:nowrap}
+.pill:hover{background:#ED1C24;color:#fff;border-color:#ED1C24;transform:translateY(-2px);box-shadow:0 4px 12px rgba(237,28,36,.25)}
+.pill:active{transform:translateY(0)}
+.pill i{font-size:.8rem;width:16px;text-align:center}
 
 /* ── Chat area ── */
-#chat{flex:1;overflow-y:auto;padding:14px 16px 10px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
-#chat::-webkit-scrollbar{width:4px}
-#chat::-webkit-scrollbar-thumb{background:#E6394655;border-radius:3px}
-.msg{max-width:88%;padding:11px 14px;border-radius:14px;font-size:.85rem;line-height:1.55;animation:fadeUp .3s ease;word-wrap:break-word}
-.msg.user{align-self:flex-end;background:linear-gradient(135deg,#1B3A5C,#2a5080);color:#fff;border-bottom-right-radius:3px;box-shadow:0 2px 8px rgba(27,58,92,.15)}
-.msg.bot{align-self:flex-start;background:#fff;color:#2C2C2C;border:1px solid rgba(0,0,0,.06);border-bottom-left-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.msg.bot .price{color:#E63946;font-weight:600}
-.msg.bot .badge{display:inline-block;background:#FFD166;color:#1B3A5C;font-size:.7rem;padding:1px 7px;border-radius:10px;font-weight:600;margin-left:4px}
-.msg.bot .age{color:#1B3A5C;font-weight:500}
-.msg.bot strong{color:#1B3A5C}
-.msg a{color:#E63946;text-decoration:underline;cursor:pointer}
-.msg a:hover{color:#c62e3a}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+#chat{flex:1;overflow-y:auto;padding:16px 16px 10px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+#chat::-webkit-scrollbar{width:5px}
+#chat::-webkit-scrollbar-thumb{background:#ED1C24;border-radius:3px}
+#chat::-webkit-scrollbar-track{background:transparent}
+.msg{max-width:85%;padding:12px 16px;border-radius:16px;font-size:.85rem;line-height:1.6;animation:msgIn .35s cubic-bezier(.34,1.56,.64,1);word-wrap:break-word}
+.msg.user{align-self:flex-end;background:linear-gradient(135deg,#ED1C24,#c4161e);color:#fff;border-bottom-right-radius:4px;box-shadow:0 3px 12px rgba(237,28,36,.2)}
+.msg.bot{align-self:flex-start;background:#fff;color:#231F20;border:1px solid rgba(0,0,0,.06);border-bottom-left-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.msg.bot .price{color:#ED1C24;font-weight:700}
+.msg.bot .badge{display:inline-block;background:#FBEA07;color:#231F20;font-size:.7rem;padding:2px 8px;border-radius:8px;font-weight:700;margin-left:4px}
+.msg.bot .age{color:#231F20;font-weight:600}
+.msg.bot strong{color:#231F20}
+.msg a{color:#ED1C24;text-decoration:underline;cursor:pointer}
+.msg a:hover{color:#a31218}
+@keyframes msgIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 /* ── Typing ── */
-#typing{display:none;align-self:flex-start;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;padding:10px 16px;border-bottom-left-radius:3px}
+#typing{display:none;align-self:flex-start;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:16px;padding:12px 18px;border-bottom-left-radius:4px}
 #typing.show{display:flex;gap:5px}
-#typing span{width:6px;height:6px;background:#E63946;border-radius:50%;animation:bounce1 1.3s ease-in-out infinite}
-#typing span:nth-child(2){animation-delay:.2s}
-#typing span:nth-child(3){animation-delay:.4s}
-@keyframes bounce1{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
+#typing span{width:8px;height:8px;background:#ED1C24;border-radius:50%;animation:typingBounce 1.2s ease-in-out infinite}
+#typing span:nth-child(2){animation-delay:.15s}
+#typing span:nth-child(3){animation-delay:.3s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-10px)}}
 
 /* ── Input ── */
-#inputBar{display:flex;gap:8px;padding:10px 16px 14px;flex-shrink:0;border-top:1px solid rgba(0,0,0,.05);background:#f8f6f3}
-#input{flex:1;padding:10px 16px;border-radius:22px;border:2px solid rgba(0,0,0,.07);font-size:.85rem;outline:none;transition:border-color .25s,box-shadow .25s;background:#fff}
-#input:focus{border-color:#E63946;box-shadow:0 0 0 3px rgba(230,57,70,.1)}
+#inputBar{display:flex;gap:10px;padding:12px 16px 14px;flex-shrink:0;border-top:2px solid rgba(237,28,36,.08);background:#F5F3F0}
+#input{flex:1;padding:12px 18px;border-radius:24px;border:2px solid rgba(0,0,0,.08);font-size:.85rem;outline:none;transition:border-color .25s,box-shadow .25s;background:#fff}
+#input:focus{border-color:#ED1C24;box-shadow:0 0 0 4px rgba(237,28,36,.1)}
 #input::placeholder{color:#b0a8a0}
-#send{width:40px;height:40px;border-radius:50%;border:none;background:linear-gradient(135deg,#1B3A5C,#2a5080);color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .25s;flex-shrink:0;box-shadow:0 2px 6px rgba(27,58,92,.2)}
-#send:hover{background:linear-gradient(135deg,#E63946,#ff6b7a);transform:scale(1.05);box-shadow:0 3px 10px rgba(230,57,70,.3)}
-#send:disabled{opacity:.35;transform:none;cursor:default;box-shadow:none}
+#send{width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(135deg,#ED1C24,#c4161e);color:#FBEA07;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .25s;flex-shrink:0;box-shadow:0 3px 8px rgba(237,28,36,.25)}
+#send:hover{background:linear-gradient(135deg,#FBEA07,#f8d800);color:#ED1C24;transform:scale(1.08) rotate(5deg);box-shadow:0 4px 14px rgba(237,28,36,.35)}
+#send:disabled{opacity:.3;transform:none;cursor:default;box-shadow:none}
 
 /* ── Right panel ── */
-#right-header{background:linear-gradient(135deg,#1B3A5C,#2a5080);padding:12px 16px;flex-shrink:0;position:relative}
-#right-header::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,209,102,.4),transparent)}
-#right-header h3{color:#FFD166;font-family:'Playfair Display',serif;font-size:.85rem;font-weight:600}
-#right-header p{color:rgba(255,255,255,.45);font-size:.65rem;margin-top:3px}
-#refCount{color:rgba(255,255,255,.5);font-size:.65rem;margin-top:1px}
+#right-header{background:linear-gradient(135deg,#ED1C24,#c4161e);padding:14px 16px 12px;flex-shrink:0;position:relative}
+#right-header::after{content:'';position:absolute;bottom:0;left:15%;right:15%;height:2px;background:linear-gradient(90deg,transparent,#FBEA07,transparent)}
+#right-header h3{color:#FBEA07;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800}
+#right-header p{color:rgba(255,255,255,.5);font-size:.65rem;margin-top:2px}
+#refCount{color:rgba(255,255,255,.55);font-size:.65rem}
 
 /* ── Tab bar ── */
-#tabBar{display:flex;background:#f0eeec;border-bottom:1px solid rgba(0,0,0,.06);flex-shrink:0}
-.tab{flex:1;padding:8px;text-align:center;font-size:.72rem;font-weight:600;color:#999;border:none;background:transparent;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent}
-.tab:hover{color:#1B3A5C}
-.tab.active{color:#E63946;border-bottom-color:#E63946;background:#fff}
-.tab i{margin-right:5px}
+#tabBar{display:flex;background:#EEEDEC;border-bottom:2px solid rgba(237,28,36,.08);flex-shrink:0}
+.tab{flex:1;padding:10px 8px;text-align:center;font-size:.73rem;font-weight:700;color:#999;border:none;background:transparent;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent}
+.tab:hover{color:#ED1C24}
+.tab.active{color:#ED1C24;border-bottom-color:#ED1C24;background:#fff}
+.tab i{margin-right:6px}
 
 /* ── Reference body ── */
-#refBody{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:#fafaf8}
-#refBody::-webkit-scrollbar{width:4px}
-#refBody::-webkit-scrollbar-thumb{background:#E6394655;border-radius:3px}
+#refBody{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:#F5F3F0}
+#refBody::-webkit-scrollbar{width:5px}
+#refBody::-webkit-scrollbar-thumb{background:#ED1C24;border-radius:3px}
+#refBody::-webkit-scrollbar-track{background:transparent}
 #refEmpty{text-align:center;padding:50px 20px;color:#bbb;font-size:.78rem;line-height:1.6}
 
 /* ── Product card ── */
-.prod-card{background:#fff;border-radius:10px;overflow:hidden;transition:all .25s;animation:fadeUp .3s ease both;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.prod-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);transform:translateY(-2px)}
-.prod-card-body{padding:10px 12px 12px}
-.prod-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.prod-name{font-weight:600;font-size:.78rem;color:#1B3A5C;line-height:1.25}
-.prod-category{font-size:.63rem;color:#999;margin-top:1px}
-.prod-price{font-weight:700;font-size:.85rem;color:#E63946;white-space:nowrap;flex-shrink:0}
-.prod-meta{display:flex;flex-wrap:wrap;gap:3px 8px;margin-top:5px;font-size:.66rem;color:#888}
-.prod-meta span{display:inline-flex;align-items:center;gap:3px}
-.prod-meta i{width:12px;text-align:center;color:#E63946;font-size:.63rem}
-.prod-stock{font-weight:500}
+.prod-card{background:#fff;border-radius:12px;overflow:hidden;transition:all .3s;animation:cardIn .35s cubic-bezier(.34,1.56,.64,1) both;box-shadow:0 2px 6px rgba(0,0,0,.06);border-left:4px solid #ED1C24}
+.prod-card:hover{box-shadow:0 6px 20px rgba(237,28,36,.12);transform:translateY(-3px)}
+.prod-card-body{padding:12px 14px 14px}
+.prod-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.prod-name{font-weight:700;font-size:.8rem;color:#231F20;line-height:1.3}
+.prod-category{font-size:.63rem;color:#999;margin-top:2px;font-weight:500}
+.prod-price{font-weight:800;font-size:.9rem;color:#ED1C24;white-space:nowrap;flex-shrink:0;background:rgba(237,28,36,.08);padding:2px 10px;border-radius:8px}
+.prod-meta{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-size:.66rem;color:#666}
+.prod-meta span{display:inline-flex;align-items:center;gap:4px}
+.prod-meta i{width:13px;text-align:center;color:#ED1C24;font-size:.65rem}
+.prod-stock{font-weight:600}
 .prod-stock.ok{color:#2e7d32}
 .prod-stock.low{color:#bf6a00}
 .prod-stock.none{color:#aaa!important;font-weight:400}
-.prod-age{background:#f0f4ff;color:#1B3A5C;padding:1px 6px;border-radius:6px;font-size:.62rem;font-weight:600}
-.prod-rating{color:#FFD166;font-size:.65rem}
-.prod-desc{font-size:.7rem;color:#666;margin-top:5px;line-height:1.4;display:none}
+.prod-age{background:#FBEA07;color:#231F20;padding:2px 7px;border-radius:6px;font-size:.62rem;font-weight:700}
+.prod-rating{color:#ED1C24;font-size:.65rem}
+.prod-desc{font-size:.7rem;color:#666;margin-top:6px;line-height:1.45;display:none}
 .prod-desc.open{display:block}
-.prod-expand{font-size:.66rem;color:#E63946;cursor:pointer;margin-top:2px;display:inline-flex;align-items:center;gap:3px}
-.prod-expand:hover{color:#c62e3a}
-.prod-stars{color:#FFD166;font-size:.6rem;letter-spacing:1px}
+.prod-expand{font-size:.66rem;color:#ED1C24;cursor:pointer;margin-top:3px;display:inline-flex;align-items:center;gap:4px;font-weight:600}
+.prod-expand:hover{color:#a31218}
+.prod-stars{color:#FBEA07;font-size:.63rem;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 /* ── Order card ── */
-.ord-card{background:#fff;border-radius:10px;overflow:hidden;transition:all .25s;animation:fadeUp .3s ease both;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.ord-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);transform:translateY(-2px)}
-.ord-card-body{padding:10px 12px 12px}
+.ord-card{background:#fff;border-radius:12px;overflow:hidden;transition:all .3s;animation:cardIn .35s cubic-bezier(.34,1.56,.64,1) both;box-shadow:0 2px 6px rgba(0,0,0,.06);border-left:4px solid #231F20}
+.ord-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1);transform:translateY(-3px)}
+.ord-card-body{padding:12px 14px 14px}
 .ord-top{display:flex;justify-content:space-between;align-items:flex-start}
-.ord-id{font-weight:700;font-size:.8rem;color:#1B3A5C}
-.ord-status{font-size:.65rem;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap}
+.ord-id{font-weight:800;font-size:.82rem;color:#231F20;font-family:'Nunito',sans-serif}
+.ord-status{font-size:.65rem;padding:3px 10px;border-radius:8px;font-weight:700;white-space:nowrap}
 .ord-status.Delivered{background:#e8f5e9;color:#2e7d32}
 .ord-status.Shipped{background:#e3f2fd;color:#1565c0}
 .ord-status.Processing{background:#fff3e0;color:#bf6a00}
 .ord-status.Cancelled{background:#fce4ec;color:#c62828}
 .ord-status.Returned{background:#f3e5f5;color:#7b1fa2}
-.ord-customer{font-size:.72rem;color:#555;margin-top:3px}
+.ord-customer{font-size:.72rem;color:#555;margin-top:4px;font-weight:500}
 .ord-detail{font-size:.66rem;color:#888;margin-top:2px}
-.ord-items{font-size:.68rem;color:#666;margin-top:5px;line-height:1.4}
-.ord-total{font-weight:700;font-size:.82rem;color:#1B3A5C;margin-top:4px}
+.ord-items{font-size:.68rem;color:#555;margin-top:6px;line-height:1.45;background:#F5F3F0;padding:5px 8px;border-radius:6px}
+.ord-total{font-weight:800;font-size:.85rem;color:#ED1C24;margin-top:5px}
 
 /* ── Sync ── */
 #syncStatus{font-size:.6rem;color:rgba(255,255,255,.35);float:right}
-#syncDetail{font-size:.58rem;color:rgba(255,255,255,.22);margin-top:1px}
+#syncDetail{font-size:.58rem;color:rgba(255,255,255,.2);margin-top:1px}
 
-/* ── MCP panel ── */
-#mcpPanel{background:#fcfcf8;border-top:1px solid rgba(0,0,0,.05);padding:7px 14px 9px;flex-shrink:0;max-height:95px;overflow-y:auto}
+/* ── Toy Engine panel ── */
+#mcpPanel{background:#fff;border-top:2px solid rgba(237,28,36,.08);padding:8px 14px 10px;flex-shrink:0;max-height:100px;overflow-y:auto}
 #mcpPanel::-webkit-scrollbar{width:3px}
-#mcpPanel::-webkit-scrollbar-thumb{background:#E6394655;border-radius:3px}
-#mcpPanel h4{font-size:.62rem;color:#bbb;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-weight:600}
-#mcpFlow{display:flex;flex-wrap:wrap;align-items:center;gap:3px}
-.mcp-step{display:flex;align-items:center;gap:3px;background:#fff;border:1px solid rgba(0,0,0,.05);border-radius:5px;padding:3px 8px;font-size:.63rem;animation:stepIn .25s ease}
-.mcp-step .icon{width:15px;text-align:center;font-size:.68rem}
-.mcp-step .icon.discover{color:#4A90D9}
-.mcp-step .icon.read{color:#E63946}
-.mcp-step .icon.llm{color:#8e24aa}
+#mcpPanel::-webkit-scrollbar-thumb{background:#ED1C24;border-radius:3px}
+#mcpPanel h4{font-size:.62rem;color:#ED1C24;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;font-weight:700}
+#mcpFlow{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.mcp-step{display:flex;align-items:center;gap:4px;background:#F5F3F0;border:1px solid rgba(0,0,0,.05);border-radius:6px;padding:4px 10px;font-size:.64rem;animation:stepPop .3s cubic-bezier(.34,1.56,.64,1)}
+.mcp-step .icon{width:16px;text-align:center;font-size:.7rem}
+.mcp-step .icon.discover{color:#ED1C24}
+.mcp-step .icon.read{color:#231F20}
+.mcp-step .icon.llm{color:#FBEA07;text-shadow:0 1px 3px rgba(0,0,0,.2)}
 .mcp-step .icon.result{color:#2e7d32}
-.mcp-step .icon.done{color:#1B3A5C}
-.mcp-step .label{color:#666;font-weight:500}
-.mcp-step .detail{color:#aaa;font-size:.58rem}
-.mcp-arrow{color:#ddd;font-size:.52rem;padding:0 1px}
-@keyframes stepIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-#mcpEmpty{text-align:center;color:#ccc;font-size:.65rem;padding:5px 0}
+.mcp-step .icon.done{color:#231F20}
+.mcp-step .label{color:#444;font-weight:600}
+.mcp-step .detail{color:#999;font-size:.58rem}
+.mcp-arrow{color:#ccc;font-size:.55rem;padding:0 2px}
+@keyframes stepPop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+#mcpEmpty{text-align:center;color:#ccc;font-size:.65rem;padding:5px 0;font-weight:500}
 
 /* ── Toast ── */
-#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(27,58,92,.95);backdrop-filter:blur(8px);color:#FFD166;padding:10px 24px;border-radius:10px;font-weight:600;font-size:.82rem;opacity:0;transition:all .35s cubic-bezier(.4,0,.2,1);z-index:999;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.15);border:1px solid rgba(255,209,102,.15)}
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:#231F20;backdrop-filter:blur(8px);color:#FBEA07;padding:12px 28px;border-radius:12px;font-weight:700;font-size:.85rem;opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);z-index:999;pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.2);border:1px solid rgba(251,234,7,.15)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#toast i{margin-right:7px;color:#FFD166}
+#toast i{margin-right:8px;color:#FBEA07}
 
 /* ── Footer ── */
-#footer{padding:6px 14px;background:#f8f6f3;border-top:1px solid rgba(0,0,0,.04);text-align:center;font-size:.62rem;color:#bbb;flex-shrink:0}
-#footer a{color:#E63946;text-decoration:none;transition:color .2s}
-#footer a:hover{color:#c62e3a}
+#footer{padding:7px 14px;background:#F5F3F0;border-top:2px solid rgba(237,28,36,.06);text-align:center;font-size:.62rem;color:#bbb;flex-shrink:0;font-weight:500}
+#footer a{color:#ED1C24;text-decoration:none;transition:color .2s;font-weight:600}
+#footer a:hover{color:#a31218}
 
 /* ── Sparkle ── */
-.sparkle{position:absolute;pointer-events:none;width:5px;height:5px;border-radius:50%;animation:sparkleOut .6s ease forwards}
+.sparkle{position:absolute;pointer-events:none;width:6px;height:6px;border-radius:50%;animation:sparkleOut .7s ease forwards}
 @keyframes sparkleOut{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
+
+/* ── Confetti ── */
+.confetti{position:fixed;pointer-events:none;width:8px;height:8px;z-index:9998;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0deg) scale(1)}100%{opacity:0;transform:translateY(100vh) rotate(720deg) scale(.3)}}
+
+/* ── Responsive ── */
+@media(max-width:600px){
+  .msg{max-width:92%;font-size:.82rem;padding:10px 14px}
+  #header{padding:10px 14px}
+  #store-name{font-size:1rem}
+  #pills{gap:5px;padding:10px 12px}
+  .pill{font-size:.68rem;padding:5px 10px}
+  #inputBar{padding:10px 12px}
+}
 </style>
 </head>
 <body>
 
 <div id="loading">
-  <div class="loading-icon"><span>🧸</span></div>
+  <div class="loading-toys t1">🧸</div>
+  <div class="loading-toys t2">🎮</div>
+  <div class="loading-toys t3">🪁</div>
+  <div class="loading-toys t4">🤖</div>
+  <div class="loading-icon"><span class="toy-box">🧸</span></div>
   <div class="loading-text">Smyths Toys</div>
   <div class="loading-sub" id="loadSub">Unboxing the toy shop...</div>
   <div class="loading-bar"><div class="loading-bar-inner"></div></div>
@@ -198,7 +227,7 @@ img{max-width:100%;display:block}
       <div id="avatar"><i class="fas fa-gift"></i></div>
       <div>
         <div id="store-name">Smyths Toys</div>
-        <div id="store-sub"><i class="fas fa-map-pin" style="font-size:9px;color:#FFD166;margin-right:3px"></i> Ireland's Favourite Toy Store</div>
+        <div id="store-sub"><i class="fas fa-map-pin"></i> Ireland's Favourite Toy Store</div>
       </div>
       <div id="tagline">Ask me about toys, orders &amp; more!</div>
     </div>
@@ -209,7 +238,7 @@ img{max-width:100%;display:block}
       <div class="msg bot">
         <strong>Welcome to Smyths Toys! 🧸</strong><br>
         I'm your toy shop assistant. Ask me about products, prices, track an order, or get gift recommendations.<br><br>
-        <span style="font-size:.8rem;color:#888">Try: <i class="fas fa-cubes" style="color:#E63946"></i> "Show me Lego"  <i class="fas fa-truck" style="color:#E63946;margin-left:10px"></i> "Track my order"  <i class="fas fa-gift" style="color:#E63946;margin-left:10px"></i> "Gift for a 6-year-old"</span>
+        <span style="font-size:.8rem;color:#888">Try: <i class="fas fa-cubes" style="color:#ED1C24"></i> "Show me Lego"  <i class="fas fa-truck" style="color:#ED1C24;margin-left:10px"></i> "Track my order"  <i class="fas fa-gift" style="color:#ED1C24;margin-left:10px"></i> "Gift for a 6-year-old"</span>
       </div>
     </div>
 
@@ -224,7 +253,7 @@ img{max-width:100%;display:block}
   <!-- RIGHT PANEL -->
   <div id="right">
     <div id="right-header">
-      <h3><i class="fas fa-cubes" style="margin-right:6px"></i> Products &amp; Orders</h3>
+      <h3><i class="fas fa-cubes"></i> Product Catalogue</h3>
       <p><span id="refCount">Loading products...</span> <span id="syncStatus"></span></p>
       <div id="syncDetail"></div>
     </div>
@@ -233,13 +262,13 @@ img{max-width:100%;display:block}
       <button class="tab" data-tab="orders"><i class="fas fa-truck"></i> Orders</button>
     </div>
     <div id="refBody">
-      <div id="refEmpty"><i class="fas fa-spinner fa-spin" style="font-size:1.2rem;color:#E63946;display:block;margin-bottom:10px"></i>Loading product catalogue...</div>
+      <div id="refEmpty"><i class="fas fa-spinner fa-spin" style="font-size:1.4rem;color:#ED1C24;display:block;margin-bottom:10px"></i>Loading product catalogue...</div>
     </div>
     <div id="mcpPanel">
-      <h4><i class="fas fa-project-diagram" style="margin-right:4px"></i> Query Engine</h4>
+      <h4><i class="fas fa-cogs"></i> Toy Engine</h4>
       <div id="mcpFlow"><div id="mcpEmpty">Ask me about toys, orders, or gift ideas...</div></div>
     </div>
-    <div id="footer">Powered by <a href="#" target="_blank">Synthetic Data</a> · <a href="https://groq.com" target="_blank">Groq AI</a></div>
+    <div id="footer">Powered by <a href="#" target="_blank">Smyths Toys</a> · <a href="https://groq.com" target="_blank">Groq AI</a></div>
   </div>
 
 </div>
@@ -250,9 +279,9 @@ img{max-width:100%;display:block}
 // ============================================================
 //  EMBEDDED SYNTHETIC DATA
 // ============================================================
-const PRODUCTS_DATA = {"products":[{"sku":"LE-001","name":"LEGO City Fire Station","category":"LEGO & Building","age_range":"5+","price":79.99,"stock":25,"rating":4.7,"description":"Fully equipped fire station with truck, helicopter, and 6 minifigures for rescue action.","tags":"LEGO,city,fire,rescue,minifigures,building"},{"sku":"LE-002","name":"LEGO Technic Porsche 911","category":"LEGO & Building","age_range":"10+","price":149.99,"stock":12,"rating":4.9,"description":"Detailed 1,580-piece Porsche 911 RSR replica with working steering and suspension.","tags":"LEGO,technic,porsche,cars,engineering,model"},{"sku":"LE-003","name":"LEGO Creator Medieval Castle","category":"LEGO & Building","age_range":"8+","price":109.99,"stock":8,"rating":4.6,"description":"3-in-1 medieval castle with tower, drawbridge, horse cart and 3 minifigures.","tags":"LEGO,creator,castle,medieval,3in1,knights"},{"sku":"LE-004","name":"LEGO Duplo Farm","category":"LEGO & Building","age_range":"2+","price":44.99,"stock":30,"rating":4.8,"description":"Large Duplo farm set with animals, tractor, farmer and barn for little builders.","tags":"LEGO,duplo,farm,animals,toddler,preschool"},{"sku":"LE-005","name":"LEGO Friends Heartlake School","category":"LEGO & Building","age_range":"6+","price":79.99,"stock":20,"rating":4.5,"description":"Colourful school building with classrooms, music room, cafeteria and 4 mini-dolls.","tags":"LEGO,friends,school,heartlake,dolls,classroom"},{"sku":"LE-006","name":"LEGO Star Wars Millennium Falcon","category":"LEGO & Building","age_range":"9+","price":169.99,"stock":5,"rating":4.9,"description":"Iconic 1,351-piece starship with 4 minifigures and detailed interior.","tags":"LEGO,starwars,millenniumfalcon,spaceship,han solo"},{"sku":"LE-007","name":"LEGO Harry Potter Hogwarts Castle","category":"LEGO & Building","age_range":"10+","price":99.99,"stock":15,"rating":4.8,"description":"Hogwarts Castle with great hall, chambers, 4 minifigures and a dragon.","tags":"LEGO,harrypotter,castle,wizard,potter,minifigures"},{"sku":"LE-008","name":"LEGO Icons Flower Bouquet","category":"LEGO & Building","age_range":"18+","price":59.99,"stock":22,"rating":4.7,"description":"Beautiful bouquet of 756-piece artificial flowers in a vase display.","tags":"LEGO,icons,flowers,bouquet,adult,decoration"},{"sku":"LE-009","name":"LEGO Speed Champions Ferrari","category":"LEGO & Building","age_range":"9+","price":24.99,"stock":40,"rating":4.6,"description":"Buildable Ferrari 512S race car with minifigure driver in racing suit.","tags":"LEGO,speed,champions,ferrari,racecar,formula"},{"sku":"LE-010","name":"LEGO Minecraft The Bee Cottage","category":"LEGO & Building","age_range":"8+","price":39.99,"stock":18,"rating":4.5,"description":"Bee-themed Minecraft cottage with garden, bees and Steve minifigure.","tags":"LEGO,minecraft,bee,cottage,garden,steve"},{"sku":"LE-011","name":"LEGO Disney Princess Cinderella's Castle","category":"LEGO & Building","age_range":"6+","price":89.99,"stock":10,"rating":4.7,"description":"Magical castle with ballroom, carriage, Cinderella, prince and mouse figures.","tags":"LEGO,disney,cinderella,castle,princess,carriage"},{"sku":"LE-012","name":"LEGO Marvel Avengers Quinjet","category":"LEGO & Building","age_range":"8+","price":74.99,"stock":14,"rating":4.6,"description":"Buildable Quinjet with 5 minifigures including Iron Man, Thor and Black Widow.","tags":"LEGO,marvel,avengers,quinjet,superhero,ironman"},{"sku":"LE-013","name":"LEGO Architecture London Skyline","category":"LEGO & Building","age_range":"12+","price":54.99,"stock":9,"rating":4.8,"description":"Detailed 468-piece model of London landmarks including Big Ben and the Eye.","tags":"LEGO,architecture,london,skyline,bigben,landmarks"},{"sku":"LE-014","name":"LEGO Classic Large Creative Brick Box","category":"LEGO & Building","age_range":"4+","price":49.99,"stock":35,"rating":4.9,"description":"790-piece mixed brick box with windows, wheels, eyes and 36 colours.","tags":"LEGO,classic,creative,bricks,building,starter"},{"sku":"AC-001","name":"Marvel Spider-Man Action Figure","category":"Action Figures & Dolls","age_range":"4+","price":24.99,"stock":28,"rating":4.5,"description":"Poseable 30cm Spider-Man figure with web-shooter accessory and 5 action poses.","tags":"marvel,spiderman,action,figure,superhero,poseable"},{"sku":"AC-002","name":"Barbie Dreamhouse","category":"Action Figures & Dolls","age_range":"3+","price":129.99,"stock":7,"rating":4.6,"description":"Three-storey 360cm dreamhouse with pool, elevator, 8 rooms and 70 accessories.","tags":"barbie,dreamhouse,doll,house,playset,fashion"},{"sku":"AC-003","name":"Bluey Playhouse","category":"Action Figures & Dolls","age_range":"3+","price":49.99,"stock":22,"rating":4.8,"description":"Bluey's family home with 4 rooms, Bluey, Bingo, Bandit and Chilli figures.","tags":"bluey,playhouse,heeler,family,dog,playset"},{"sku":"AC-004","name":"Pokémon Battle Figure Pack","category":"Action Figures & Dolls","age_range":"4+","price":19.99,"stock":45,"rating":4.7,"description":"6-pack of battle figures featuring Pikachu, Charizard, Eevee, Mewtwo, Gengar and Lucario.","tags":"pokemon,battle,figure,pack,pikachu,charizard"},{"sku":"AC-005","name":"Paw Patrol Rescue Tower","category":"Action Figures & Dolls","age_range":"3+","price":59.99,"stock":12,"rating":4.6,"description":"Tall rescue tower with launching slide, lookout, PA system and 3 pup figures.","tags":"pawpatrol,rescue,tower,lookout,pups,chase"},{"sku":"AC-006","name":"Hot Wheels 50-Car Pack","category":"Action Figures & Dolls","age_range":"3+","price":49.99,"stock":30,"rating":4.9,"description":"Fifty assorted die-cast Hot Wheels cars in a collector case.","tags":"hotwheels,cars,diecast,collector,racing,50pack"},{"sku":"AC-007","name":"Disney Frozen Elsa Dress-Up Doll","category":"Action Figures & Dolls","age_range":"3+","price":34.99,"stock":18,"rating":4.5,"description":"Elsa doll in signature ice gown with removable cape, shoes and tiara.","tags":"disney,frozen,elsa,dressup,doll,princess"},{"sku":"AC-008","name":"DC Batman Action Figure","category":"Action Figures & Dolls","age_range":"4+","price":22.99,"stock":25,"rating":4.4,"description":"Poseable 30cm Batman figure with grapple launcher, cape and 7 martial arts moves.","tags":"dc,batman,action,figure,superhero,gotham"},{"sku":"AC-009","name":"CoComelon Learning Bus","category":"Action Figures & Dolls","age_range":"1+","price":29.99,"stock":20,"rating":4.7,"description":"Singing school bus with JJ, lights, 3 songs and interactive buttons.","tags":"cocomelon,learning,bus,jj,singing,toddler"},{"sku":"AC-010","name":"My Little Pony 6-Pack","category":"Action Figures & Dolls","age_range":"3+","price":34.99,"stock":14,"rating":4.5,"description":"Set of 6 colourful ponies with brushable manes, tails and magic friendship symbols.","tags":"mylittlepony,pony,6pack,friendship,brushable,colourful"},{"sku":"BR-001","name":"Monopoly Classic Board Game","category":"Board Games & Puzzles","age_range":"8+","price":29.99,"stock":40,"rating":4.7,"description":"Classic property trading game with new tokens, bank cards and faster play.","tags":"monopoly,boardgame,property,trading,classic,family"},{"sku":"BR-002","name":"Scrabble Original","category":"Board Games & Puzzles","age_range":"10+","price":26.99,"stock":35,"rating":4.6,"description":"Classic word game with wooden tiles, board and letter bag for 2-4 players.","tags":"scrabble,word,game,letters,spelling,family"},{"sku":"BR-003","name":"Jenga Classic","category":"Board Games & Puzzles","age_range":"6+","price":19.99,"stock":50,"rating":4.5,"description":"Exciting block-stacking game with 54 wooden blocks and stacking tray.","tags":"jenga,blocks,stacking,balance,game,family"},{"sku":"BR-004","name":"Chess & Checkers Set","category":"Board Games & Puzzles","age_range":"7+","price":24.99,"stock":22,"rating":4.4,"description":"Wooden chess and checkers set with folding board and felted pieces.","tags":"chess,checkers,boardgame,strategy,wooden,2player"},{"sku":"BR-005","name":"Ravensburger 1000pc Puzzle - Harbour View","category":"Board Games & Puzzles","age_range":"12+","price":16.99,"stock":28,"rating":4.8,"description":"Stunning 1000-piece panoramic puzzle of a colourful harbour town.","tags":"puzzle,1000pc,ravensburger,harbour,panoramic,landscape"},{"sku":"BR-006","name":"UNO Card Game","category":"Board Games & Puzzles","age_range":"7+","price":9.99,"stock":60,"rating":4.6,"description":"Fast-paced colour and number matching card game for 2-10 players.","tags":"uno,cards,party,family,speed,game"},{"sku":"BR-007","name":"Cluedo","category":"Board Games & Puzzles","age_range":"10+","price":24.99,"stock":30,"rating":4.5,"description":"Classic murder mystery game with 5 suspects, 6 weapons and 9 rooms.","tags":"cluedo,mystery,murder,detective,boardgame,deduction"},{"sku":"BR-008","name":"Risk Global Domination","category":"Board Games & Puzzles","age_range":"10+","price":34.99,"stock":15,"rating":4.4,"description":"Classic strategy board game of global conquest with 6 armies and 42 territories.","tags":"risk,strategy,war,boardgame,territories,conquest"},{"sku":"BR-009","name":"Ravensburger 200pc Children's Puzzle","category":"Board Games & Puzzles","age_range":"6+","price":12.99,"stock":32,"rating":4.7,"description":"Colourful 200-piece children's puzzle featuring friendly dinosaurs in a landscape.","tags":"puzzle,children,200pc,dinosaurs,kids,colourful"},{"sku":"BR-010","name":"Exploding Kittens Card Game","category":"Board Games & Puzzles","age_range":"7+","price":14.99,"stock":40,"rating":4.6,"description":"Strategic Russian roulette card game with kittens, tacos and goats. 2-5 players.","tags":"explodingkittens,cards,party,funny,strategy,game"},{"sku":"AR-001","name":"Crayola 152-Piece Art Set","category":"Arts & Crafts","age_range":"4+","price":34.99,"stock":25,"rating":4.8,"description":"Complete 152-piece art kit with crayons, markers, coloured pencils and paper.","tags":"crayola,art,set,drawing,colouring,crafts"},{"sku":"AR-002","name":"Play-Doh 36-Can Mega Pack","category":"Arts & Crafts","age_range":"2+","price":44.99,"stock":18,"rating":4.7,"description":"Mega pack of 36 assorted Play-Doh modelling compound cans in rainbow colours.","tags":"playdoh,modelling,clay,colours,mega,crafts"},{"sku":"AR-003","name":"Paint Your Own Mug Kit","category":"Arts & Crafts","age_range":"6+","price":14.99,"stock":30,"rating":4.4,"description":"Ceramic mug painting kit with 10 paints, brush and 2 ceramic mugs.","tags":"paint,mug,ceramic,kit,gift,birthday"},{"sku":"AR-004","name":"A4 Drawing Pad 100 Sheets","category":"Arts & Crafts","age_range":"3+","price":9.99,"stock":45,"rating":4.5,"description":"Premium A4 drawing pad with 100 sheets of heavy-weight paper suitable for all media.","tags":"drawing,pad,sketch,paper,a4,art"},{"sku":"AR-005","name":"Origami Paper Kit","category":"Arts & Crafts","age_range":"7+","price":11.99,"stock":35,"rating":4.3,"description":"200 sheets of origami paper with 20 colours plus instruction booklet for 25 models.","tags":"origami,paper,crafts,japanese,folding,colours"},{"sku":"AR-006","name":"Sewing Kit for Beginners","category":"Arts & Crafts","age_range":"8+","price":19.99,"stock":14,"rating":4.4,"description":"Complete sewing starter kit with fabric, thread, needles, buttons and 5 beginner projects.","tags":"sewing,kit,beginner,fabric,needle,craft"},{"sku":"AR-007","name":"Friendship Bracelet Making Kit","category":"Arts & Crafts","age_range":"6+","price":12.99,"stock":28,"rating":4.6,"description":"Create 20+ friendship bracelets with 20 colours of thread, beads and charms.","tags":"bracelet,friendship,thread,beads,crafts,diy"},{"sku":"AR-008","name":"Kinetic Sand 1kg","category":"Arts & Crafts","age_range":"3+","price":14.99,"stock":40,"rating":4.7,"description":"1kg of stretchy, mouldable kinetic sand that never dries out. Includes tray and tools.","tags":"kinetic,sand,sensory,tactile,mouldable,toy"},{"sku":"OU-001","name":"12ft Trampoline with Safety Net","category":"Outdoor & Sports","age_range":"6+","price":199.99,"stock":6,"rating":4.8,"description":"12ft diameter trampoline with full safety enclosure, ladder and rust-resistant frame.","tags":"trampoline,outdoor,garden,bouncing,safety,12ft"},{"sku":"OU-002","name":"Micro Sprite Scooter","category":"Outdoor & Sports","age_range":"5+","price":89.99,"stock":15,"rating":4.7,"description":"Lightweight adjustable scooter with LED wheels and lean-to-steer technology.","tags":"scooter,micro,led,wheels,kids,outdoor"},{"sku":"OU-003","name":"Official Size 5 Football","category":"Outdoor & Sports","age_range":"8+","price":24.99,"stock":48,"rating":4.5,"description":"FIFA-approved size 5 football with machine-stitched PU cover and butyl bladder.","tags":"football,soccer,size5,fifa,outdoor,sports"},{"sku":"OU-004","name":"Basketball Hoop Set","category":"Outdoor & Sports","age_range":"5+","price":69.99,"stock":12,"rating":4.4,"description":"Adjustable height basketball hoop with backboard, rim, net and pump.","tags":"basketball,hoop,outdoor,garden,adjustable,sports"},{"sku":"OU-005","name":"Kids Bike 20-inch","category":"Outdoor & Sports","age_range":"6+","price":149.99,"stock":9,"rating":4.6,"description":"20-inch kids bike with training wheels, hand brakes, bell and mudguards. Blue.","tags":"bike,cycling,kids,20inch,blue,training"},{"sku":"OU-006","name":"Skateboard Complete","category":"Outdoor & Sports","age_range":"8+","price":44.99,"stock":20,"rating":4.3,"description":"Complete 31-inch skateboard with maple deck, ABEC 7 bearings and 95A wheels.","tags":"skateboard,complete,skate,park,trick,outdoor"},{"sku":"OU-007","name":"Delta Kite Large Rainbow","category":"Outdoor & Sports","age_range":"4+","price":14.99,"stock":35,"rating":4.2,"description":"Large 150cm rainbow delta kite with 50m line, tail and easy-launch handle.","tags":"kite,rainbow,delta,outdoor,wind,flying"},{"sku":"OU-008","name":"Aerobie Frisbee Pro","category":"Outdoor & Sports","age_range":"6+","price":12.99,"stock":40,"rating":4.4,"description":"Professional ring frisbee that flies straight for 75m+ with aerodynamic ring design.","tags":"frisbee,aerobie,flying,disc,outdoor,pro"},{"sku":"BA-001","name":"Fisher-Price Laugh & Learn Smart Stage","category":"Baby & Toddler","age_range":"6-36m","price":59.99,"stock":14,"rating":4.7,"description":"Interactive baby stage with lights, music, learning songs and 5 developmental zones.","tags":"fisherprice,laughlearn,smartstage,baby,interactive,learning"},{"sku":"BA-002","name":"VTech Touch & Learn Activity Desk","category":"Baby & Toddler","age_range":"2-5y","price":44.99,"stock":20,"rating":4.6,"description":"Activity desk with interactive pages, LCD screen, clock and 20+ activities.","tags":"vtech,activity,desk,learning,touch,screen"},{"sku":"BA-003","name":"Baby Sensory Spiral Toy","category":"Baby & Toddler","age_range":"0-12m","price":19.99,"stock":32,"rating":4.5,"description":"Hanging sensory spiral with crinkle textures, rattle, mirror and teether. Attaches to car seat or cot.","tags":"sensory,spiral,baby,cot,carrier,crinckle"},{"sku":"BA-004","name":"Bright Starts Activity Centre","category":"Baby & Toddler","age_range":"6-24m","price":89.99,"stock":8,"rating":4.6,"description":"360-degree activity centre with toys, lights, music and rotating seat.","tags":"brightstarts,activity,centre,baby,seat,stimulation"},{"sku":"BA-005","name":"Baby Einstein Take Along Tunes","category":"Baby & Toddler","age_range":"3-36m","price":12.99,"stock":50,"rating":4.8,"description":"Musical toy with baby-friendly volume, 7 classical melodies and colourful lights.","tags":"babyeinstein,music,tunes,classical,baby,light"},{"sku":"BA-006","name":"The First Years Stacking Rings","category":"Baby & Toddler","age_range":"6-24m","price":8.99,"stock":55,"rating":4.5,"description":"Classic 7-piece stacking ring toy with wobbly base and textured rings.","tags":"stacking,rings,baby,toddler,classic,7piece"},{"sku":"BA-007","name":"Soft Building Blocks 12-Pack","category":"Baby & Toddler","age_range":"3-18m","price":16.99,"stock":40,"rating":4.6,"description":"12 soft velour blocks with numbers, animals, textures and squeaker inside.","tags":"soft,blocks,baby,stacking,educational,textures"},{"sku":"BA-008","name":"Skip Hop Baby Gym","category":"Baby & Toddler","age_range":"0-12m","price":54.99,"stock":12,"rating":4.7,"description":"Play gym with overhead toys, 5 sensory zones, mirror and tummy time pillow.","tags":"skiphop,baby,gym,sensory,tummytime,playmat"},{"sku":"RC-001","name":"Remote Control Off-Road Truck","category":"Remote Control","age_range":"6+","price":44.99,"stock":22,"rating":4.5,"description":"4WD RC monster truck with 2.4GHz radio, rechargeable battery and 30-minute runtime.","tags":"remote,control,truck,offroad,4wd,monster"},{"sku":"RC-002","name":"Mini Drone with Camera","category":"Remote Control","age_range":"8+","price":69.99,"stock":15,"rating":4.3,"description":"Compact HD camera drone with altitude hold, headless mode and one-key return.","tags":"drone,camera,mini,flying,rc,aerial"},{"sku":"RC-003","name":"RC Helicopter 3-Channel","category":"Remote Control","age_range":"8+","price":39.99,"stock":18,"rating":4.2,"description":"3-channel infrared helicopter with durable metal frame, gyro stabiliser and LED lights.","tags":"rc,helicopter,3channel,infrared,gyro,flying"},{"sku":"RC-004","name":"Fast RC Speed Boat","category":"Remote Control","age_range":"8+","price":59.99,"stock":10,"rating":4.4,"description":"Self-righting RC speed boat with 2.4GHz radio, 25km/h top speed and rechargeable battery.","tags":"rc,boat,speed,waterproof,selfrighting,fast"},{"sku":"RC-005","name":"RC Battle Tank","category":"Remote Control","age_range":"6+","price":54.99,"stock":8,"rating":4.5,"description":"1:24 scale RC tank with rotating turret, realistic sound effects and airsoft cannon.","tags":"rc,tank,battle,military,airsoft,sounds"},{"sku":"RC-006","name":"Stunt RC Car 360 Spin","category":"Remote Control","age_range":"6+","price":34.99,"stock":28,"rating":4.4,"description":"Remote control car with 360-degree spinning action, LED lights and 2.4GHz control.","tags":"rc,car,stunt,spin,360,led"},{"sku":"SC-001","name":"Junior Microscope Set","category":"Science & Learning","age_range":"8+","price":39.99,"stock":16,"rating":4.6,"description":"100x-1200x microscope with prepared slides, blank slides, tools and LED light.","tags":"microscope,science,junior,slides,experiments,learning"},{"sku":"SC-002","name":"Botley 2.0 Coding Robot","category":"Science & Learning","age_range":"5+","price":64.99,"stock":11,"rating":4.8,"description":"Screen-free coding robot with 160-piece set, obstacle avoidance and looping commands.","tags":"coding,robot,botley,stem,programming,screenfree"},{"sku":"SC-003","name":"Illuminated Globe of the World","category":"Science & Learning","age_range":"8+","price":49.99,"stock":20,"rating":4.5,"description":"30cm political globe with LED illumination showing constellations in the dark.","tags":"globe,illuminated,world,geography,constellations,learning"},{"sku":"SC-004","name":"National Geographic Chemistry Set","category":"Science & Learning","age_range":"10+","price":34.99,"stock":14,"rating":4.6,"description":"100+ science experiments with real lab equipment, chemicals and instruction guide.","tags":"chemistry,set,nationalgeographic,experiments,lab,stem"},{"sku":"SC-005","name":"Telescope 70mm Aperture","category":"Science & Learning","age_range":"10+","price":79.99,"stock":7,"rating":4.4,"description":"70mm refractor telescope with tripod, finderscope and 3 eyepieces for space exploration.","tags":"telescope,astronomy,space,stars,moon,70mm"},{"sku":"SC-006","name":"60 Super Science Kit","category":"Science & Learning","age_range":"6+","price":29.99,"stock":25,"rating":4.5,"description":"60 exciting science experiments including volcanoes, crystals, slime and magnets.","tags":"science,kit,experiments,slime,volcano,crystals"},{"sku":"SF-001","name":"Squishmallows 10-inch Plush","category":"Soft Toys & Plush","age_range":"3+","price":14.99,"stock":50,"rating":4.9,"description":"Ultra-soft 10-inch Squishmallows plush in assorted characters. Super squishy and collectable.","tags":"squishmallows,plush,soft,squishy,collectable,cute"},{"sku":"SF-002","name":"Giant Teddy Bear 1.2m","category":"Soft Toys & Plush","age_range":"3+","price":49.99,"stock":10,"rating":4.7,"description":"Massive 1.2m soft teddy bear with bow tie, perfect for cuddles and gifts.","tags":"teddy,bear,giant,soft,cuddly,gift"},{"sku":"SF-003","name":"Rainbow Unicorn Plush 40cm","category":"Soft Toys & Plush","age_range":"3+","price":24.99,"stock":25,"rating":4.8,"description":"Beautiful 40cm rainbow unicorn plush with glittery horn, mane and embroidered eyes.","tags":"unicorn,plush,rainbow,soft,glitter,magical"},{"sku":"SF-004","name":"Fluffy Cat Plush 30cm","category":"Soft Toys & Plush","age_range":"3+","price":19.99,"stock":30,"rating":4.6,"description":"Realistic 30cm fluffy cat plush with purring sound when squeezed. Ginger colour.","tags":"cat,plush,fluffy,pet,ginger,soft"},{"sku":"SF-005","name":"Elephant Softee 45cm","category":"Soft Toys & Plush","age_range":"0+","price":29.99,"stock":18,"rating":4.7,"description":"Extra-soft 45cm elephant plush with floppy ears, trunk and safety eyes for all ages.","tags":"elephant,plush,softee,soft,baby,stuffed"},{"sku":"SF-006","name":"Dinosaur Plush T-Rex 50cm","category":"Soft Toys & Plush","age_range":"3+","price":34.99,"stock":14,"rating":4.5,"description":"Friendly 50cm T-Rex plush with embroidered smile, soft spikes and movable arms.","tags":"dinosaur,trex,plush,soft,green,roar"}],
-"orders":[{"order_id":"ST-2026-0001","customer_name":"Liam Kelly","email":"kellyfamily@gmail.com","sku":"LEG-001","item_name":"Lego City Police Station","category":"Building Sets","qty":3,"unit_price":89.99,"total":269.97,"order_date":"26/06/26","status":"Delivered","payment_method":"Google Pay","shipping_address":"23 O'Connell Street, Dublin 1","tracking_number":"IE8934927891"},{"order_id":"ST-2026-0002","customer_name":"Siobhan Murphy","email":"siobhan.murphy@eircom.net","sku":"LEG-002","item_name":"Lego Star Wars X-Wing","category":"Building Sets","qty":3,"unit_price":129.99,"total":389.97,"order_date":"09/01/26","status":"Delivered","payment_method":"Revolut","shipping_address":"5 Green Road, Cork","tracking_number":"IE4466589567"},{"order_id":"ST-2026-0003","customer_name":"Patrick O'Brien","email":"patobrien72@gmail.com","sku":"ART-005","item_name":"Origami Kit","category":"Arts & Crafts","qty":2,"unit_price":8.99,"total":17.98,"order_date":"17/05/26","status":"Delivered","payment_method":"Apple Pay","shipping_address":"12 Henry Street, Galway","tracking_number":"IE3303082117"},{"order_id":"ST-2026-0004","customer_name":"Emma Walsh","email":"emma.w@gmail.com","sku":"BRD-003","item_name":"Jenga Classic","category":"Board Games","qty":1,"unit_price":19.99,"total":19.99,"order_date":"03/03/26","status":"Delivered","payment_method":"Visa","shipping_address":"7 Main Street, Limerick","tracking_number":"IE7729391844"},{"order_id":"ST-2026-0005","customer_name":"Aoife Ryan","email":"aoife.ryan@outlook.com","sku":"SFT-001","item_name":"Squishmallows 10-inch","category":"Soft Toys","qty":4,"unit_price":14.99,"total":59.96,"order_date":"12/04/26","status":"Delivered","payment_method":"PayPal","shipping_address":"19 Park Avenue, Waterford","tracking_number":"IE5610238743"},{"order_id":"ST-2026-0006","customer_name":"Sean Byrne","email":"sean.byrne@hotmail.com","sku":"LEG-006","item_name":"Lego Star Wars Millennium Falcon","category":"Building Sets","qty":1,"unit_price":169.99,"total":169.99,"order_date":"22/02/26","status":"Shipped","payment_method":"Mastercard","shipping_address":"8 Castle Street, Kilkenny","tracking_number":"IE3987230192"},{"order_id":"ST-2026-0007","customer_name":"Niamh O'Sullivan","email":"niamh.osullivan@eircom.net","sku":"BAB-001","item_name":"Fisher-Price Laugh & Learn Smart Stage","category":"Baby & Toddler","qty":1,"unit_price":59.99,"total":59.99,"order_date":"15/05/26","status":"Delivered","payment_method":"Revolut","shipping_address":"3 The Green, Drogheda, Co. Louth","tracking_number":"IE6647128901"},{"order_id":"ST-2026-0008","customer_name":"Cian McCarthy","email":"cian.mccarthy@icloud.com","sku":"RCC-002","item_name":"Mini Drone with Camera","category":"Remote Control","qty":1,"unit_price":69.99,"total":69.99,"order_date":"28/06/26","status":"Shipped","payment_method":"Apple Pay","shipping_address":"15 Oak Avenue, Dundalk, Co. Louth","tracking_number":"IE3398472635"},{"order_id":"ST-2026-0009","customer_name":"Ciara Doyle","email":"ciara.doyle@gmail.com","sku":"ART-003","item_name":"Paint Your Own Mug Kit","category":"Arts & Crafts","qty":2,"unit_price":14.99,"total":29.98,"order_date":"10/01/26","status":"Returned","payment_method":"Visa","shipping_address":"10 Sea Road, Sligo","tracking_number":"IE5543786221"},{"order_id":"ST-2026-0010","customer_name":"Fionn O'Connor","email":"fionn.oconnor@protonmail.com","sku":"OUT-001","item_name":"12ft Trampoline","category":"Outdoor","qty":1,"unit_price":199.99,"total":199.99,"order_date":"01/04/26","status":"Delivered","payment_method":"Google Pay","shipping_address":"22 The Demesne, Athlone, Co. Westmeath","tracking_number":"IE1190827354"},{"order_id":"ST-2026-0011","customer_name":"Maeve Gallagher","email":"maeve.gallagher@yahoo.com","sku":"SCI-002","item_name":"Botley 2.0 Coding Robot","category":"Science","qty":1,"unit_price":64.99,"total":64.99,"order_date":"18/06/26","status":"Processing","payment_method":"PayPal","shipping_address":"6 Church Street, Navan, Co. Meath","tracking_number":""},{"order_id":"ST-2026-0012","customer_name":"Eoin Lynch","email":"eoin.lynch72@gmail.com","sku":"ACT-004","item_name":"Pokémon Battle Figure Pack","category":"Action Figures","qty":2,"unit_price":19.99,"total":39.98,"order_date":"05/03/26","status":"Delivered","payment_method":"Mastercard","shipping_address":"14 College Road, Cork","tracking_number":"IE7734192804"},{"order_id":"ST-2026-0013","customer_name":"Roisin Murray","email":"roisin.murray@eircom.net","sku":"BRD-001","item_name":"Monopoly Classic","category":"Board Games","qty":1,"unit_price":29.99,"total":29.99,"order_date":"20/04/26","status":"Delivered","payment_method":"Revolut","shipping_address":"4 Harbour View, Tralee, Co. Kerry","tracking_number":"IE3390517284"},{"order_id":"ST-2026-0014","customer_name":"Daragh O'Donnell","email":"daragh.odonnell@gmail.com","sku":"RCC-001","item_name":"RC Off-Road Truck","category":"Remote Control","qty":1,"unit_price":44.99,"total":44.99,"order_date":"14/05/26","status":"Delivered","payment_method":"Visa","shipping_address":"9 Grafton Street, Dublin 2","tracking_number":"IE9986120334"},{"order_id":"ST-2026-0015","customer_name":"Clodagh O'Brien","email":"clodagh.obrien@icloud.com","sku":"BAB-004","item_name":"Bright Starts Activity Centre","category":"Baby & Toddler","qty":1,"unit_price":89.99,"total":89.99,"order_date":"09/06/26","status":"Processing","payment_method":"Apple Pay","shipping_address":"2 The Crescent, Drogheda, Co. Louth","tracking_number":""},{"order_id":"ST-2026-0016","customer_name":"Conor Fitzpatrick","email":"conor.fitz@gmail.com","sku":"SFT-002","item_name":"Giant Teddy Bear","category":"Soft Toys","qty":1,"unit_price":49.99,"total":49.99,"order_date":"25/02/26","status":"Cancelled","payment_method":"PayPal","shipping_address":"11 Greenlane, Galway","tracking_number":""},{"order_id":"ST-2026-0017","customer_name":"Grainne Smith","email":"grainne.smith@eircom.net","sku":"ACT-001","item_name":"Marvel Spider-Man Figure","category":"Action Figures","qty":1,"unit_price":24.99,"total":24.99,"order_date":"22/05/26","status":"Delivered","payment_method":"Google Pay","shipping_address":"5 St. Patrick's Terrace, Limerick","tracking_number":"IE6654319820"},{"order_id":"ST-2026-0018","customer_name":"Cathal Dunne","email":"cathal.dunne@protonmail.com","sku":"OUT-008","item_name":"Aerobie Frisbee Pro","category":"Outdoor","qty":2,"unit_price":12.99,"total":25.98,"order_date":"13/03/26","status":"Delivered","payment_method":"Mastercard","shipping_address":"17 New Street, Kilkenny","tracking_number":"IE8872635491"},{"order_id":"ST-2026-0019","customer_name":"Aisling, O'Shea","email":"aisling.oshea@hotmail.com","sku":"BRD-006","item_name":"UNO Card Game","category":"Board Games","qty":2,"unit_price":9.99,"total":19.98,"order_date":"30/04/26","status":"Delivered","payment_method":"Revolut","shipping_address":"8 Bayview, Sligo","tracking_number":"IE5544483719"},{"order_id":"ST-2026-0020","customer_name":"Niall O'Reilly","email":"niall.oreilly@gmail.com","sku":"BAB-005","item_name":"Baby Einstein Take Along Tunes","category":"Baby & Toddler","qty":1,"unit_price":12.99,"total":12.99,"order_date":"17/01/26","status":"Shipped","payment_method":"Visa","shipping_address":"3 Riverside, Athlone, Co. Westmeath","tracking_number":"IE4401782635"},{"order_id":"ST-2026-0021","customer_name":"Katie Lynch","email":"katie.lynch@icloud.com","sku":"RCC-004","item_name":"Fast RC Speed Boat","category":"Remote Control","qty":1,"unit_price":59.99,"total":59.99,"order_date":"11/06/26","status":"Cancelled","payment_method":"Google Pay","shipping_address":"16 Quay Street, Galway","tracking_number":""},{"order_id":"ST-2026-0022","customer_name":"Padraig Walsh","email":"padraig.walsh@eircom.net","sku":"OUT-002","item_name":"Micro Sprite Scooter","category":"Outdoor","qty":1,"unit_price":89.99,"total":89.99,"order_date":"19/05/26","status":"Delivered","payment_method":"Mastercard","shipping_address":"21 Hillview, Waterford","tracking_number":"IE3109728654"},{"order_id":"ST-2026-0023","customer_name":"Deirdre Hogan","email":"deirdre.hogan@yahoo.com","sku":"LEG-004","item_name":"LEGO Duplo Farm","category":"Building Sets","qty":1,"unit_price":44.99,"total":44.99,"order_date":"22/06/26","status":"Shipped","payment_method":"PayPal","shipping_address":"8 The Paddock, Dundalk, Co. Louth","tracking_number":"IE2264118709"},{"order_id":"ST-2026-0024","customer_name":"Rory O'Brien","email":"rory.obrien@gmail.com","sku":"OUT-003","item_name":"Size 5 Football","category":"Outdoor","qty":1,"unit_price":24.99,"total":24.99,"order_date":"28/02/26","status":"Delivered","payment_method":"Revolut","shipping_address":"7 Bluebell Avenue, Cork","tracking_number":"IE9937185402"},{"order_id":"ST-2026-0025","customer_name":"Fiona O'Rourke","email":"fiona.orourke@hotmail.com","sku":"BAB-003","item_name":"Baby Sensory Spiral Toy","category":"Baby & Toddler","qty":1,"unit_price":19.99,"total":19.99,"order_date":"04/05/26","status":"Delivered","payment_method":"Apple Pay","shipping_address":"15 Garden Way, Limerick","tracking_number":"IE1762839401"},{"order_id":"ST-2026-0026","customer_name":"Colm O'Brien","email":"colm.obrien@protonmail.com","sku":"BRD-010","item_name":"Exploding Kittens","category":"Board Games","qty":2,"unit_price":14.99,"total":29.98,"order_date":"16/04/26","status":"Returned","payment_method":"Visa","shipping_address":"10 Manor Street, Dublin 8","tracking_number":"IE4408712635"},{"order_id":"ST-2026-0027","customer_name":"Eimear Murray","email":"eimear.murray@gmail.com","sku":"ACT-010","item_name":"My Little Pony 6 Pack","category":"Action Figures","qty":1,"unit_price":34.99,"total":34.99,"order_date":"08/06/26","status":"Processing","payment_method":"Google Pay","shipping_address":"4 College Street, Kilkenny","tracking_number":""},{"order_id":"ST-2026-0028","customer_name":"Brendan O'Neill","email":"brendan.oneill@eircom.net","sku":"SCI-004","item_name":"National Geographic Chemistry Set","category":"Science","qty":1,"unit_price":34.99,"total":34.99,"order_date":"21/03/26","status":"Delivered","payment_method":"Mastercard","shipping_address":"18 Rock Road, Tralee, Co. Kerry","tracking_number":"IE5540982174"},{"order_id":"ST-2026-0029","customer_name":"Sinead Lyons","email":"sinead.lyons@icloud.com","sku":"ACT-003","item_name":"Bluey Playhouse","category":"Action Figures","qty":1,"unit_price":49.99,"total":49.99,"order_date":"10/05/26","status":"Delivered","payment_method":"PayPal","shipping_address":"6 Park View, Navan, Co. Meath","tracking_number":"IE9910257348"},{"order_id":"ST-2026-0030","customer_name":"Kevin O'Connell","email":"kevin.oconnell@gmail.com","sku":"RCC-003","item_name":"RC Helicopter","category":"Remote Control","qty":1,"unit_price":39.99,"total":39.99,"order_date":"19/04/26","status":"Delivered","payment_method":"Revolut","shipping_address":"13 The Rise, Sligo","tracking_number":"IE3396724451"},{"order_id":"ST-2026-0031","customer_name":"Aine O'Brien","email":"aine.obrien@yahoo.com","sku":"SFT-004","item_name":"Fluffy Cat Plush","category":"Soft Toys","qty":2,"unit_price":19.99,"total":39.98,"order_date":"12/06/26","status":"Shipped","payment_method":"Visa","shipping_address":"2 Seaview Terrace, Cork","tracking_number":"IE1102976345"},{"order_id":"ST-2026-0032","customer_name":"Oisin Farrell","email":"oisin.farrell@protonmail.com","sku":"OUT-005","item_name":"Kids Bike 20-inch","category":"Outdoor","qty":1,"unit_price":149.99,"total":149.99,"order_date":"25/05/26","status":"Delivered","payment_method":"Google Pay","shipping_address":"9 Hazelwood, Waterford","tracking_number":"IE4478621093"},{"order_id":"ST-2026-0033","customer_name":"Orla Fitzpatrick","email":"orla.fitz@eircom.net","sku":"BAB-008","item_name":"Skip Hop Baby Gym","category":"Baby & Toddler","qty":1,"unit_price":54.99,"total":54.99,"order_date":"16/06/26","status":"Processing","payment_method":"Apple Pay","shipping_address":"20 Church Avenue, Drogheda, Co. Louth","tracking_number":""},{"order_id":"ST-2026-0034","customer_name":"Diarmuid Byrne","email":"diarmuid.byrne@gmail.com","sku":"ACT-006","item_name":"Hot Wheels 50-Car Pack","category":"Action Figures","qty":1,"unit_price":49.99,"total":49.99,"order_date":"23/02/26","status":"Delivered","payment_method":"Mastercard","shipping_address":"11 The Boulevard, Galway","tracking_number":"IE6654132890"},{"order_id":"ST-2026-0035","customer_name":"Roisin O'Brien","email":"roisin.obrien@icloud.com","sku":"SFT-001","item_name":"Squishmallows 10-inch","category":"Soft Toys","qty":3,"unit_price":14.99,"total":44.97,"order_date":"29/04/26","status":"Delivered","payment_method":"Revolut","shipping_address":"14 Castle Road, Kilkenny","tracking_number":"IE3398812507"},{"order_id":"ST-2026-0036","customer_name":"Tadhg Murphy","email":"tadhg.murphy@eircom.net","sku":"SCI-005","item_name":"Telescope 70mm Aperture","category":"Science","qty":1,"unit_price":79.99,"total":79.99,"order_date":"30/05/26","status":"Shipped","payment_method":"PayPal","shipping_address":"5 Mill Lane, Athlone, Co. Westmeath","tracking_number":"IE1187306295"},{"order_id":"ST-2026-0037","customer_name":"Mairead O'Connor","email":"mairead.oconnor@gmail.com","sku":"ACT-009","item_name":"CoComelon Learning Bus","category":"Action Figures","qty":1,"unit_price":29.99,"total":29.99,"order_date":"10/04/26","status":"Cancelled","payment_method":"Google Pay","shipping_address":"12 Fair Green, Navan, Co. Meath","tracking_number":""},{"order_id":"ST-2026-0038","customer_name":"Eoghan Kelly","email":"eoghan.kelly@protonmail.com","sku":"RCC-005","item_name":"RC Battle Tank","category":"Remote Control","qty":1,"unit_price":54.99,"total":54.99,"order_date":"07/06/26","status":"Delivered","payment_method":"Visa","shipping_address":"3 Station Road, Dundalk, Co. Louth","tracking_number":"IE5520763194"},{"order_id":"ST-2026-0039","customer_name":"Brid O'Brien","email":"brid.obrien@yahoo.com","sku":"LEG-010","item_name":"LEGO Minecraft The Bee Cottage","category":"Building Sets","qty":1,"unit_price":39.99,"total":39.99,"order_date":"02/03/26","status":"Returned","payment_method":"Mastercard","shipping_address":"17 The Close, Limerick","tracking_number":"IE7738891025"},{"order_id":"ST-2026-0040","customer_name":"Daire Lynch","email":"daire.lynch@icloud.com","sku":"BAB-006","item_name":"Stacking Rings","category":"Baby & Toddler","qty":2,"unit_price":8.99,"total":17.98,"order_date":"18/05/26","status":"Delivered","payment_method":"Revolut","shipping_address":"6 Oakleigh, Tralee, Co. Kerry","tracking_number":"IE9920183475"}],
-"training":[{"category":"Product Search","query":"Show me Lego","expected_answer_pattern":"Here are the LEGO sets we have in stock:\n- **LEGO City Fire Station** – €79.99 (In Stock: 25)\n- **LEGO Technic Porsche** – €149.99 (In Stock: 12)\n- **LEGO Friends Heartlake School** – €79.99 (In Stock: 20)\n- **LEGO Star Wars Millennium Falcon** – €169.99 (In Stock: 5)\n\nWould you like me to sort by price or age recommendation?","tone":"Helpful","use_case":"customer_query"},{"category":"Product Search","query":"Do you have any board games?","expected_answer_pattern":"We have a great selection of board games! Here are a few:\n- **Monopoly Classic** – €29.99 (Ages 8+)\n- **Cluedo** – €24.99 (Ages 10+)\n- **Jenga Classic** – €19.99 (Ages 6+)\n- **Exploding Kittens** – €14.99 (Ages 7+)\n\nWould you like to filter by age or price range?","tone":"Enthusiastic","use_case":"customer_query"},{"category":"Product Search","query":"I'm looking for Paw Patrol toys","expected_answer_pattern":"Great choice! Here's what we have in Paw Patrol:\n- **Paw Patrol Rescue Tower** – €59.99 (In Stock: 12)\n- **Paw Patrol Figures Set** – €24.99 (In Stock: 22)\n\nWould you like me to show you more details on any of these?","tone":"Friendly","use_case":"customer_query"},{"category":"Product Search","query":"What soft toys do you sell?","expected_answer_pattern":"We have a lovely range of soft toys. Here's a selection:\n\n**Baby Safe (0+):**\n- Elephant Softee 45cm – €29.99\n\n**Ages 3+:**\n- Squishmallows 10-inch – €14.99 (In Stock: 50)\n- Giant Teddy Bear 1.2m – €49.99 (In Stock: 10)\n- Rainbow Unicorn Plush 40cm – €24.99\n- Fluffy Cat Plush 30cm – €19.99\n- Dinosaur Plush T-Rex 50cm – €34.99\n\nWhich age group are you shopping for?","tone":"Warm","use_case":"customer_query"},{"category":"Price & Budget","query":"Lego under €50","expected_answer_pattern":"Here are LEGO sets under €50:\n- **LEGO Duplo Farm** – €44.99 (Ages 2+, Stock: 30)\n- **LEGO Minecraft The Bee Cottage** – €39.99 (Ages 8+, Stock: 18)\n- **LEGO Speed Champions Ferrari** – €24.99 (Ages 9+, Stock: 40)\n- **LEGO Classic Creative Brick Box** – €49.99 (Ages 4+, Stock: 35)\n\nWould you like me to narrow it down by age?","tone":"Helpful","use_case":"customer_query"},{"category":"Price & Budget","query":"What's the cheapest drone?","expected_answer_pattern":"Our most affordable drone is the **Mini Drone with Camera** at €69.99 (Ages 8+, Stock: 15). It features a built-in HD camera, altitude hold, and one-key return. Perfect for beginners!\n\nWould you like to see other remote control toys?","tone":"Informative","use_case":"customer_query"},{"category":"Price & Budget","query":"I have €100, what can I get?","expected_answer_pattern":"With a €100 budget, you have lots of options! Here are some top picks under €100:\n\n**LEGO & Building:**\n- LEGO Harry Potter Hogwarts Castle – €99.99\n- LEGO Friends Heartlake School – €79.99\n- LEGO Marvel Avengers Quinjet – €74.99\n\n**Other Categories:**\n- Mini Drone with Camera – €69.99\n- Botley 2.0 Coding Robot – €64.99\n- Micro Sprite Scooter – €89.99\n\nWhat are you shopping for? A gift or something specific?","tone":"Friendly","use_case":"customer_query"},{"category":"Age-based Recommendations","query":"What's good for a 4-year-old?","expected_answer_pattern":"For a 4-year-old, here are some top-rated options:\n\n**LEGO & Building:**\n- LEGO Classic Creative Brick Box – €49.99 (Ages 4+) ⭐4.9\n- LEGO Duplo Farm – €44.99 (Ages 2+) ⭐4.8\n\n**Action Figures:**\n- Marvel Spider-Man Action Figure – €24.99 (Ages 4+)\n- Pokémon Battle Figure Pack – €19.99 (Ages 4+)\n\n**Arts & Crafts:**\n- Crayola 152-Piece Art Set – €34.99 (Ages 4+)\n- Kinetic Sand 1kg – €14.99 (Ages 3+)\n\nWould you like more ideas? I can narrow it down by interest!","tone":"Warm","use_case":"customer_query"},{"category":"Age-based Recommendations","query":"Gift for a 10-year-old boy","expected_answer_pattern":"Great! For a 10-year-old boy, here are some popular choices:\n\n**Top Picks:**\n- LEGO Technic Porsche 911 – €149.99 (Ages 10+) ⭐4.9\n- LEGO Star Wars Millennium Falcon – €169.99 (Ages 9+) ⭐4.9\n- Mini Drone with Camera – €69.99 (Ages 8+)\n- RC Off-Road Truck – €44.99 (Ages 6+)\n- Botley 2.0 Coding Robot – €64.99 (Ages 5+)\n- National Geographic Chemistry Set – €34.99 (Ages 10+)\n\nWhat's your budget? I can help narrow it down!","tone":"Friendly","use_case":"customer_query"},{"category":"Age-based Recommendations","query":"Something for a baby","expected_answer_pattern":"We have a wonderful selection for babies! Here's what I'd recommend by age:\n\n**0-12 Months:**\n- Baby Sensory Spiral Toy – €19.99\n- Soft Building Blocks 12-Pack – €16.99\n- Skip Hop Baby Gym – €54.99\n- Baby Einstein Take Along Tunes – €12.99\n\n**6-24 Months:**\n- Fisher-Price Laugh & Learn Smart Stage – €59.99\n- Bright Starts Activity Centre – €89.99\n- VTech Touch & Learn Desk – €44.99\n\nWould you like me to focus on a specific age or price range?","tone":"Warm","use_case":"customer_query"},{"category":"Order Tracking","query":"Track my order","expected_answer_pattern":"I'd be happy to track your order! I just need either your **Order ID** (it looks like ST-2026-XXXX) or the **email address** you used when ordering. Which do you have?","tone":"Helpful","use_case":"customer_query"},{"category":"Order Tracking","query":"Where's my order ST-2026-0001?","expected_answer_pattern":"I found order **ST-2026-0001** placed by **Liam Kelly** on **26/06/26**.\n\n**Status:** ✅ Delivered\n**Items:** Lego City Police Station (x3) – €269.97\n**Shipping Address:** 23 O'Connell Street, Dublin 1\n**Tracking Number:** IE8934927891\n\nIt was delivered — enjoy your Lego City sets! Is there anything else I can help with?","tone":"Helpful","use_case":"customer_query"},{"category":"Order Tracking","query":"What did Sarah Murphy order?","expected_answer_pattern":"Let me look up orders for Sarah Murphy...\n\nI found **2 orders** under Sarah Murphy:\n\n1. **ST-2026-001** – Lego City Police Station – €89.99 – Delivered\n2. **ST-2026-002** – Lego Star Wars X-Wing – €129.99 – Delivered\n\nShe's had some great Lego orders! Would you like details on any specific order?","tone":"Helpful","use_case":"customer_query"},{"category":"Order Tracking","query":"When will my order arrive?","expected_answer_pattern":"To check delivery status, I'll need your **Order ID** or **email address**. \n\nDelivery generally takes:\n- **Processing:** 1-2 business days after ordering\n- **Shipped:** 2-5 business days for delivery\n- **Tracking links** are sent via email once shipped\n\nWhat's your order ID and I'll look it up right away?","tone":"Helpful","use_case":"customer_query"},{"category":"Returns & Cancellations","query":"Can I return this?","expected_answer_pattern":"Yes, you can! Our **returns policy**:\n- Items can be returned within **30 days** of delivery\n- Items must be **unopened** and in **original packaging**\n- We'll process the refund within **5-7 business days** after receiving the return\n\nTo start a return, I'll need your **Order ID**. Could you provide that?","tone":"Helpful","use_case":"customer_query"},{"category":"Returns & Cancellations","query":"I want to cancel my order","expected_answer_pattern":"I can help with that! Orders can be cancelled as long as they haven't been shipped yet.\n\nTo cancel, I'll need your **Order ID** (starts with ST-2026). Could you provide it?\n\nIf the order has already shipped, we can arrange a return instead once it arrives.","tone":"Helpful","use_case":"customer_query"},{"category":"Returns & Cancellations","query":"My toy arrived broken","expected_answer_pattern":"I'm so sorry to hear that! We'll get this sorted for you right away.\n\nIf your item arrived damaged:\n1. Please email photos to **support@smythstoys.ie**\n2. We'll arrange a **free return** and send a **replacement** or issue a **full refund**\n3. Returns are processed within **5-7 business days**\n\nCould you share your **Order ID** so I can start the process?","tone":"Empathetic","use_case":"customer_query"},{"category":"Stock & Availability","query":"Are the Pokémon cards in stock?","expected_answer_pattern":"Let me check our stock...\n\nWe have the **Pokémon Battle Figure Pack** (6-pack) in stock with **45 units** available at €19.99 (Ages 4+). \n\nIt's a popular item so it's well-stocked! Would you like to order one?","tone":"Informative","use_case":"customer_query"},{"category":"Stock & Availability","query":"Is this in store?","expected_answer_pattern":"We're an **online-only store** so all orders are delivered directly to your door. Here's what to expect:\n\n- **Delivery time:** 2-5 business days after processing\n- **Delivery cost:** Free on orders over €50\n- **Returns:** Free within 30 days\n\nWould you like me to check stock on a specific item?","tone":"Informative","use_case":"customer_query"},{"category":"Stock & Availability","query":"When will you restock Lego?","expected_answer_pattern":"Let me check the current stock on LEGO sets...\n\nMost LEGO sets are currently in stock! Here are our best-sellers:\n- **LEGO City Fire Station** – 25 in stock\n- **LEGO Classic Brick Box** – 35 in stock\n- **LEGO Duplo Farm** – 30 in stock\n\nIf a specific set is out of stock, we typically **restock within 2-3 weeks**. Is there a particular set you're looking for?","tone":"Helpful","use_case":"customer_query"},{"category":"General Store Info","query":"What payment methods do you accept?","expected_answer_pattern":"We accept the following payment methods:\n\n- **Visa** \n- **Mastercard**\n- **PayPal**\n- **Revolut**\n- **Apple Pay**\n- **Google Pay**\n\nAll payments are processed securely. Your card details are never stored with us. Is there anything else you'd like to know?","tone":"Informative","use_case":"customer_query"},{"category":"General Store Info","query":"How long does delivery take?","expected_answer_pattern":"**Delivery Information:**\n\n- **Processing time:** 1-2 business days\n- **Delivery time:** 2-5 business days after shipping\n- **Free delivery** on orders over €50\n- **Express delivery** available at checkout (next working day on orders before 2pm)\n\nYou'll receive a tracking number via email once your order is shipped. Would you like to place an order?","tone":"Informative","use_case":"customer_query"},{"category":"General Store Info","query":"Do you have a loyalty programme?","expected_answer_pattern":"We don't currently have a loyalty programme, but here's how you can save:\n\n- **Free delivery** on orders over €50\n- **Price match guarantee** – if you find a lower price, we'll match it\n- **Sign up for our newsletter** to get notified about sales and special offers\n\nIs there anything else I can help you with?","tone":"Helpful","use_case":"customer_query"},{"category":"Gift Recommendations","query":"What's a good birthday gift for an 8-year-old?","expected_answer_pattern":"For an 8-year-old, here are some top-rated gift ideas:\n\n**Top Picks:**\n- **LEGO Creator Medieval Castle** – €109.99 (Ages 8+) ⭐4.6\n- **LEGO Marvel Avengers Quinjet** – €74.99 (Ages 8+) ⭐4.6\n- **LEGO Minecraft The Bee Cottage** – €39.99 (Ages 8+) ⭐4.5\n- **Junior Microscope Set** – €39.99 (Ages 8+) ⭐4.6\n- **Remote Control Off-Road Truck** – €44.99 (Ages 6+) ⭐4.5\n- **Skateboard Complete** – €44.99 (Ages 8+) ⭐4.3\n\nWhat's your budget? I can recommend the best options!","tone":"Friendly","use_case":"customer_query"},{"category":"Gift Recommendations","query":"What's popular right now?","expected_answer_pattern":"Here are our **most popular toys right now** across all categories, based on ratings:\n\n1. **Squishmallows 10-inch** – €14.99 ⭐4.9\n2. **LEGO Technic Porsche 911** – €149.99 ⭐4.9\n3. **LEGO Classic Brick Box** – €49.99 ⭐4.9\n4. **LEGO Star Wars Millennium Falcon** – €169.99 ⭐4.9\n5. **Hot Wheels 50-Car Pack** – €49.99 ⭐4.9\n6. **Bluey Playhouse** – €49.99 ⭐4.8\n7. **LEGO Duplo Farm** – €44.99 ⭐4.8\n8. **Crayola 152-Piece Art Set** – €34.99 ⭐4.8\n\nIs there a specific age or interest I can help narrow down?","tone":"Enthusiastic","use_case":"customer_query"}]
+const PRODUCTS_DATA = {"products":[{"sku":"LE-001","name":"LEGO City Fire Station","category":"LEGO & Building","age_range":"5+","price":79.99,"stock":25,"rating":4.7,"description":"Fully equipped fire station with truck, helicopter, and 6 minifigures for rescue action.","tags":"LEGO,city,fire,rescue,minifigures,building"},{"sku":"LE-002","name":"LEGO Technic Porsche 911","category":"LEGO & Building","age_range":"10+","price":149.99,"stock":12,"rating":4.9,"description":"Detailed 1,580-piece Porsche 911 RSR replica with working steering and suspension.","tags":"LEGO,technic,porsche,cars,engineering,model"},{"sku":"LE-003","name":"LEGO Creator Medieval Castle","category":"LEGO & Building","age_range":"8+","price":109.99,"stock":8,"rating":4.6,"description":"3-in-1 medieval castle with tower, drawbridge, horse cart and 3 minifigures.","tags":"LEGO,creator,castle,medieval,3in1,knights"},{"sku":"LE-004","name":"LEGO Duplo Farm","category":"LEGO & Building","age_range":"2+","price":44.99,"stock":30,"rating":4.8,"description":"Large Duplo farm set with animals, tractor, farmer and barn for little builders.","tags":"LEGO,duplo,farm,animals,toddler,preschool"},{"sku":"LE-005","name":"LEGO Friends Heartlake School","category":"LEGO & Building","age_range":"6+","price":79.99,"stock":20,"rating":4.5,"description":"Colourful school building with classrooms, music room, cafeteria and 4 mini-dolls.","tags":"LEGO,friends,school,heartlake,dolls,classroom"},{"sku":"LE-006","name":"LEGO Star Wars Millennium Falcon","category":"LEGO & Building","age_range":"9+","price":169.99,"stock":5,"rating":4.9,"description":"Iconic 1,351-piece starship with 4 minifigures and detailed interior.","tags":"LEGO,starwars,millenniumfalcon,spaceship,han solo"},{"sku":"LE-007","name":"LEGO Harry Potter Hogwarts Castle","category":"LEGO & Building","age_range":"10+","price":99.99,"stock":15,"rating":4.8,"description":"Hogwarts Castle with great hall, chambers, 4 minifigures and a dragon.","tags":"LEGO,harrypotter,castle,magic,wizard"},{"sku":"LE-008","name":"LEGO Icons Vespa 125","category":"LEGO & Building","age_range":"18+","price":99.99,"stock":6,"rating":4.7,"description":"Authentic Vespa 125 replica in pastel blue with helmet, basket and flower bouquet.","tags":"LEGO,icons,vespa,scooter,adult"},{"sku":"LE-009","name":"LEGO Speed Champions Lamborghini","category":"LEGO & Building","age_range":"7+","price":24.99,"stock":42,"rating":4.6,"description":"Buildable Lamborghini Countach with driver minifigure and racing helmet.","tags":"LEGO,speed,champions,lamborghini,cars"},{"sku":"LE-010","name":"LEGO Minecraft The Cave","category":"LEGO & Building","age_range":"7+","price":34.99,"stock":22,"rating":4.5,"description":"Minecraft cave adventure with Steve, zombie, spider and exploding Creeper figures.","tags":"LEGO,minecraft,cave,creeper,adventure"},{"sku":"LE-011","name":"LEGO Disney Princess Castle","category":"LEGO & Building","age_range":"5+","price":74.99,"stock":15,"rating":4.7,"description":"Enchanted Disney castle with Cinderella, Ariel, Tiana and 4 other mini-dolls.","tags":"LEGO,disney,princess,castle,dolls"},{"sku":"LE-012","name":"LEGO Marvel Avengers Tower","category":"LEGO & Building","age_range":"8+","price":99.99,"stock":9,"rating":4.8,"description":"Avengers Tower with Iron Man, Captain America, Thor, Black Widow and Hulk.","tags":"LEGO,marvel,avengers,tower,superhero"},{"sku":"LE-013","name":"LEGO Architecture London Skyline","category":"LEGO & Building","age_range":"12+","price":54.99,"stock":20,"rating":4.6,"description":"Build London landmarks including Big Ben, Tower Bridge and the London Eye.","tags":"LEGO,architecture,london,landmark"},{"sku":"LE-014","name":"LEGO Classic Creative Box","category":"LEGO & Building","age_range":"4+","price":34.99,"stock":45,"rating":4.8,"description":"500-piece brick box with 35 colours and 2 baseplates for endless creativity.","tags":"LEGO,classic,creative,bricks,colours"},{"sku":"ACT-001","name":"Marvel Spider-Man Action Figure","category":"Action Figures & Dolls","age_range":"5+","price":24.99,"stock":35,"rating":4.6,"description":"12-inch Spider-Man figure with web-shooting action and 15 articulated joints.","tags":"marvel,spiderman,action,figure,superhero"},{"sku":"ACT-002","name":"Barbie Dreamhouse Playset","category":"Action Figures & Dolls","age_range":"3+","price":119.99,"stock":11,"rating":4.7,"description":"Three-storey Dreamhouse with 10 rooms, elevator, slide and 25 accessories.","tags":"barbie,dreamhouse,doll,playset"},{"sku":"ACT-003","name":"Bluey Family Home Playset","category":"Action Figures & Dolls","age_range":"3+","price":39.99,"stock":28,"rating":4.9,"description":"Bluey family home with 4 rooms, Bluey, Bingo, Chilli and Bandit figures.","tags":"bluey,family,playset,dog"},{"sku":"ACT-004","name":"Pok\u00e9mon Battle Figure Set","category":"Action Figures & Dolls","age_range":"5+","price":19.99,"stock":40,"rating":4.5,"description":"Set of 6 Pok\u00e9mon figures including Pikachu, Charizard, Eevee and Mewtwo.","tags":"pokemon,battle,figure,pikachu,charizard"},{"sku":"ACT-005","name":"PAW Patrol Adventure Bay Set","category":"Action Figures & Dolls","age_range":"3+","price":49.99,"stock":20,"rating":4.8,"description":"Complete Adventure Bay set with Chase, Marshall, Skye, Rubble and Zuma.","tags":"pawpatrol,adventure,rescue,puppy"},{"sku":"ACT-006","name":"Hot Wheels 20-Car Gift Pack","category":"Action Figures & Dolls","age_range":"4+","price":19.99,"stock":50,"rating":4.5,"description":"20 assorted Hot Wheels die-cast cars in a reusable storage case.","tags":"hotwheels,cars,gift,pack"},{"sku":"ACT-007","name":"Disney Frozen Elsa & Anna Dolls","category":"Action Figures & Dolls","age_range":"3+","price":29.99,"stock":22,"rating":4.7,"description":"Frozen II fashion dolls with Elsa and Anna in authentic movie costumes.","tags":"disney,frozen,elsa,anna,dolls"},{"sku":"ACT-008","name":"DC Batman Figure","category":"Action Figures & Dolls","age_range":"5+","price":22.99,"stock":18,"rating":4.5,"description":"12-inch Batman figure with cape, grappling hook and 14 points of articulation.","tags":"dc,batman,superhero,action"},{"sku":"ACT-009","name":"CoComelon JJ Figure Set","category":"Action Figures & Dolls","age_range":"1+","price":14.99,"stock":38,"rating":4.6,"description":"JJ, TomTom and YoYo figures with 5 accessories from the CoComelon world.","tags":"cocomelon,jj,toddler,figure"},{"sku":"ACT-010","name":"My Little Pony Friendship Castle","category":"Action Figures & Dolls","age_range":"4+","price":44.99,"stock":14,"rating":4.6,"description":"Friendship Castle with Twilight Sparkle, Rainbow Dash and Pinkie Pie ponies.","tags":"mylittlepony,castle,friendship"},{"sku":"BRD-001","name":"Monopoly Dublin Edition","category":"Board Games & Puzzles","age_range":"8+","price":34.99,"stock":32,"rating":4.7,"description":"Trade Dublin landmarks from Trinity College to Temple Bar in this city edition.","tags":"monopoly,dublin,boardgame,ireland"},{"sku":"BRD-002","name":"Scrabble Original","category":"Board Games & Puzzles","age_range":"10+","price":29.99,"stock":27,"rating":4.8,"description":"Classic word game with wooden tiles, board and letter racks for 2-4 players.","tags":"scrabble,word,game,classic"},{"sku":"BRD-003","name":"Jenga Classic","category":"Board Games & Puzzles","age_range":"6+","price":19.99,"stock":44,"rating":4.6,"description":"Wooden block stacking game. Pull a block, place it on top without toppling the tower.","tags":"jenga,blocks,stacking,classic"},{"sku":"BRD-004","name":"Master Chess Set","category":"Board Games & Puzzles","age_range":"7+","price":24.99,"stock":15,"rating":4.5,"description":"Wooden chess set with weighted pieces, felted bases and folding board.","tags":"chess,strategy,wooden,board"},{"sku":"BRD-005","name":"1000-Piece Irish Landscape Puzzle","category":"Board Games & Puzzles","age_range":"10+","price":14.99,"stock":36,"rating":4.7,"description":"Stunning aerial photograph of the Cliffs of Moher in a 1000-piece jigsaw.","tags":"puzzle,ireland,cliffs,landscape"},{"sku":"BRD-006","name":"UNO Classic Card Game","category":"Board Games & Puzzles","age_range":"7+","price":9.99,"stock":48,"rating":4.6,"description":"Fast-paced family card game with action cards including Skip, Reverse and Wild.","tags":"uno,cards,family,classic"},{"sku":"BRD-007","name":"Cluedo Mystery Game","category":"Board Games & Puzzles","age_range":"8+","price":26.99,"stock":21,"rating":4.5,"description":"Solve the murder mystery in Tudor Manor with 6 suspects, weapons and rooms.","tags":"cluedo,mystery,detective,board"},{"sku":"BRD-008","name":"Risk Global Domination","category":"Board Games & Puzzles","age_range":"10+","price":34.99,"stock":9,"rating":4.4,"description":"Conquer the world in this strategy board game with 6 armies and 42 territories.","tags":"risk,strategy,world,conquer"},{"sku":"BRD-009","name":"Ravensburger 4-Puzzle Set","category":"Board Games & Puzzles","age_range":"4+","price":16.99,"stock":30,"rating":4.6,"description":"Set of 4 progressive puzzles with 12, 16, 20 and 24 pieces for toddlers.","tags":"puzzle,ravensburger,toddler,set"},{"sku":"BRD-010","name":"Irish Card Game 45","category":"Board Games & Puzzles","age_range":"8+","price":12.99,"stock":17,"rating":4.5,"description":"Traditional Irish card game 45 with rules booklet and premium playing cards.","tags":"cards,irish,45,traditional"},{"sku":"ART-001","name":"Crayola 152-Piece Art Set","category":"Arts & Crafts","age_range":"5+","price":29.99,"stock":35,"rating":4.7,"description":"Massive art case with crayons, markers, coloured pencils, paints and paper.","tags":"crayola,art,colours,set"},{"sku":"ART-002","name":"Play-Doh 24-Can Variety Pack","category":"Arts & Crafts","age_range":"2+","price":19.99,"stock":40,"rating":4.6,"description":"24 assorted Play-Doh cans with 12 colours and 8 cutters and tools.","tags":"playdoh,modelling,clay,craft"},{"sku":"ART-003","name":"Acrylic Paint Studio Set","category":"Arts & Crafts","age_range":"8+","price":34.99,"stock":12,"rating":4.5,"description":"24 acrylic paint pots with 6 brushes, 3 canvases and a colour mixing guide.","tags":"acrylic,paint,art,studio"},{"sku":"ART-004","name":"A3 Drawing Pad & Sketch Set","category":"Arts & Crafts","age_range":"6+","price":14.99,"stock":28,"rating":4.6,"description":"A3 spiral-bound sketch pad with 12 graphite pencils, eraser and sharpener.","tags":"drawing,sketch,pad,pencils"},{"sku":"ART-005","name":"Ultimate Craft Activity Kit","category":"Arts & Crafts","age_range":"5+","price":24.99,"stock":19,"rating":4.5,"description":"Over 1,000 craft pieces including pom-poms, pipe cleaners, googly eyes and glue.","tags":"craft,kit,ultimate,activities"},{"sku":"ART-006","name":"DAS Modelling Clay 1kg","category":"Arts & Crafts","age_range":"6+","price":11.99,"stock":23,"rating":4.4,"description":"Air-hardening modelling clay in natural terracotta, ideal for sculpture projects.","tags":"modelling,clay,das,sculpture"},{"sku":"ART-007","name":"My First Sewing Kit","category":"Arts & Crafts","age_range":"6+","price":16.99,"stock":31,"rating":4.5,"description":"Child-safe sewing kit with fabric squares, felt, thread, needles and instructions.","tags":"sewing,craft,kit,beginner"},{"sku":"ART-008","name":"Hama Bead Mega Bucket","category":"Arts & Crafts","age_range":"5+","price":22.99,"stock":26,"rating":4.7,"description":"10,000 Hama beads in 30 colours with 4 pegboards and ironing paper.","tags":"hama,beads,bucket,mega"},{"sku":"OUT-001","name":"12FT Trampoline with Enclosure","category":"Outdoor & Sports","age_range":"6+","price":199.99,"stock":5,"rating":4.7,"description":"12-foot trampoline with safety net enclosure, ladder and weather-resistant mat.","tags":"trampoline,outdoor,garden,fitness"},{"sku":"OUT-002","name":"Razor A3 Kick Scooter","category":"Outdoor & Sports","age_range":"6+","price":69.99,"stock":14,"rating":4.6,"description":"Lightweight aluminium scooter with 200mm wheels, rear brake and adjustable handlebars.","tags":"scooter,razor,kick,outdoor"},{"sku":"OUT-003","name":"Size 4 Football","category":"Outdoor & Sports","age_range":"0","price":14.99,"stock":42,"rating":4.5,"description":"FIFA-approved size 4 football with machine-stitched PU cover and butyl bladder.","tags":"football,soccer,ball,sport"},{"sku":"OUT-004","name":"Basketball Hoop & Stand","category":"Outdoor & Sports","age_range":"5+","price":59.99,"stock":10,"rating":4.4,"description":"Adjustable basketball hoop with 1.5m backboard, stand and inflatable ball.","tags":"basketball,hoop,outdoor,sport"},{"sku":"OUT-005","name":"RoyalBaby 16-Inch Kids Bike","category":"Outdoor & Sports","age_range":"3+","price":89.99,"stock":8,"rating":4.6,"description":"16-inch kids bike with training wheels, chain guard, bell and adjustable seat.","tags":"bike,cycling,kids,outdoor"},{"sku":"OUT-006","name":"Cruiser Skateboard Complete","category":"Outdoor & Sports","age_range":"8+","price":39.99,"stock":16,"rating":4.5,"description":"27-inch maple cruiser skateboard with kicktail, ABEC 7 bearings and LED wheels.","tags":"skateboard,cruiser,outdoor,skate"},{"sku":"OUT-007","name":"Rainbow Delta Kite","category":"Outdoor & Sports","age_range":"4+","price":12.99,"stock":34,"rating":4.3,"description":"Large rainbow delta kite with 50m line, carry bag and easy-launch design.","tags":"kite,rainbow,outdoor,garden"},{"sku":"OUT-008","name":"Frisbee Ultimate Disc","category":"Outdoor & Sports","age_range":"5+","price":6.99,"stock":48,"rating":4.2,"description":"Professional 175g ultimate frisbee disc in bright orange with grip edge.","tags":"frisbee,disc,outdoor,sport"},{"sku":"BAB-001","name":"Fisher-Price Laugh & Learn Chair","category":"Baby & Toddler","age_range":"12-24m","price":34.99,"stock":20,"rating":4.8,"description":"Interactive baby chair with songs, phrases and lights teaching ABCs and 123s.","tags":"fisherprice,baby,learning,chair"},{"sku":"BAB-002","name":"VTech Touch & Learn Elephant","category":"Baby & Toddler","age_range":"6-12m","price":22.99,"stock":27,"rating":4.7,"description":"Soft elephant book with 4 interactive pages teaching animals, colours and music.","tags":"vtech,baby,elephant,learning"},{"sku":"BAB-003","name":"Sensory Soft Play Cube Set","category":"Baby & Toddler","age_range":"0-12m","price":24.99,"stock":15,"rating":4.6,"description":"Set of 6 textured soft play cubes with rattles, crinkles, squeakers and mirror.","tags":"sensory,baby,soft,play"},{"sku":"BAB-004","name":"Activity Walker & Music Centre","category":"Baby & Toddler","age_range":"9-24m","price":49.99,"stock":11,"rating":4.7,"description":"2-in-1 walker and activity table with lights, sounds, piano keys and rollers.","tags":"walker,baby,activity,music"},{"sku":"BAB-005","name":"Eco-Friendly Rattle Set","category":"Baby & Toddler","age_range":"0-12m","price":12.99,"stock":33,"rating":4.5,"description":"Set of 3 wooden rattles in natural finish with different sounds and textures.","tags":"rattle,baby,eco,wooden"},{"sku":"BAB-006","name":"Stacking Rainbow Rings","category":"Baby & Toddler","age_range":"12-24m","price":9.99,"stock":40,"rating":4.6,"description":"Classic stacking ring toy with 6 colourful rings and wobble base.","tags":"stacking,rings,baby,classic"},{"sku":"BAB-007","name":"Soft Building Blocks Set","category":"Baby & Toddler","age_range":"6-18m","price":16.99,"stock":36,"rating":4.5,"description":"12 soft fabric blocks with numbers, animals, shapes and crinkle textures.","tags":"blocks,baby,soft,learning"},{"sku":"BAB-008","name":"Baby Gym Play Mat with Toys","category":"Baby & Toddler","age_range":"0-12m","price":54.99,"stock":9,"rating":4.7,"description":"Large play mat with arch and 5 hanging toys including mirror, rattle and teether.","tags":"baby,gym,playmat,sensory"},{"sku":"RCC-001","name":"Remote Control Monster RC Car","category":"Remote Control","age_range":"6+","price":44.99,"stock":25,"rating":4.5,"description":"4WD monster truck with 2.4GHz remote, rechargeable battery and 30-minute runtime.","tags":"remote,monster,truck,rc"},{"sku":"RCC-002","name":"HD Camera Drone with GPS","category":"Remote Control","age_range":"14+","price":149.99,"stock":6,"rating":4.6,"description":"GPS drone with 4K camera, 25-minute flight time, return-to-home and follow-me.","tags":"drone,camera,gps,remote"},{"sku":"RCC-003","name":"RC Helicopter with Gyro","category":"Remote Control","age_range":"8+","price":39.99,"stock":14,"rating":4.4,"description":"3-channel RC helicopter with 6-axis gyro, LED lights and USB charging.","tags":"helicopter,rc,remote,gyro"},{"sku":"RCC-004","name":"RC Speed Boat","category":"Remote Control","age_range":"8+","price":34.99,"stock":11,"rating":4.5,"description":"High-speed RC boat with dual motors, 25km/h top speed and self-righting hull.","tags":"boat,rc,speed,remote"},{"sku":"RCC-005","name":"RC Battle Tank","category":"Remote Control","age_range":"8+","price":54.99,"stock":7,"rating":4.6,"description":"Military tank replica with 360-degree turret, sound effects and airsoft BB firing.","tags":"tank,rc,battle,military"},{"sku":"RCC-006","name":"RC Stunt Car 360 Rotation","category":"Remote Control","age_range":"6+","price":29.99,"stock":19,"rating":4.4,"description":"360-degree spinning stunt car with LED lights, music and 2.4GHz proportional control.","tags":"stunt,car,rc,360"},{"sku":"SCI-001","name":"National Geographic Microscope Set","category":"Science & Learning","age_range":"8+","price":54.99,"stock":13,"rating":4.8,"description":"40x-640x microscope with prepared slides, tools, and a learning guide.","tags":"microscope,science,natgeo,learning"},{"sku":"SCI-002","name":"Sphero BOLT Coding Robot","category":"Science & Learning","age_range":"8+","price":149.99,"stock":4,"rating":4.7,"description":"Programmable robotic ball with LED matrix, sensors and 2-hour battery life.","tags":"sphero,robot,coding,STEM"},{"sku":"SCI-003","name":"Illuminated Globe of the World","category":"Science & Learning","age_range":"5+","price":39.99,"stock":21,"rating":4.6,"description":"30cm illuminated globe with political and physical map modes and LED base.","tags":"globe,world,science,map"},{"sku":"SCI-004","name":"Children's Chemistry Lab Set","category":"Science & Learning","age_range":"10+","price":34.99,"stock":10,"rating":4.5,"description":"20-piece chemistry set with test tubes, beakers, goggles and 15 experiments.","tags":"chemistry,lab,science,experiment"},{"sku":"SCI-005","name":"Telescope for Kids","category":"Science & Learning","age_range":"8+","price":69.99,"stock":8,"rating":4.5,"description":"60mm aperture telescope with 50x-200x magnification, tripod and finderscope.","tags":"telescope,space,science,astronomy"},{"sku":"SCI-006","name":"6-in-1 STEM Science Kit","category":"Science & Learning","age_range":"6+","price":29.99,"stock":29,"rating":4.6,"description":"Build a volcano, slime, crystal, solar system, motor and kaleidoscope.","tags":"STEM,science,kit,experiments"},{"sku":"SFT-001","name":"Squishmallows 12-Inch Plush","category":"Soft Toys & Plush","age_range":"3+","price":19.99,"stock":38,"rating":4.8,"description":"Ultra-soft Squishmallows plush in assorted characters with marshmallow texture.","tags":"squishmallows,plush,soft,cute"},{"sku":"SFT-002","name":"Classic Teddy Bear 30cm","category":"Soft Toys & Plush","age_range":"0","price":14.99,"stock":45,"rating":4.7,"description":"Traditional 30cm brown teddy bear with bow tie, safety eyes and washable fur.","tags":"teddy,bear,classic,soft"},{"sku":"SFT-003","name":"Rainbow Unicorn Plush","category":"Soft Toys & Plush","age_range":"2+","price":24.99,"stock":17,"rating":4.6,"description":"Large 40cm unicorn plush with rainbow mane, gold horn and sparkly hooves.","tags":"unicorn,rainbow,plush,soft"},{"sku":"SFT-004","name":"Fluffy Cat Plush Toy","category":"Soft Toys & Plush","age_range":"0","price":16.99,"stock":29,"rating":4.5,"description":"Super-soft 25cm ginger cat plush with purring sound when you squeeze its tummy.","tags":"cat,plush,soft,fluffy"},{"sku":"SFT-005","name":"Baby Elephant Plush 35cm","category":"Soft Toys & Plush","age_range":"0","price":22.99,"stock":13,"rating":4.7,"description":"Adorable 35cm grey elephant plush with floppy ears, embroidered eyes and trunk.","tags":"elephant,plush,baby,soft"},{"sku":"SFT-006","name":"Green Dinosaur Plush 50cm","category":"Soft Toys & Plush","age_range":"2+","price":27.99,"stock":0,"rating":4.5,"description":"Large 50cm green T-Rex plush with felt teeth, stitched claws and roars sound.","tags":"dinosaur,plush,t-rex,green"}],
+"orders":[{"order_id":"ST-2026-0001","customer_name":"Liam Kelly","email":"kellyfamily@gmail.com","sku":"LEG-001","item_name":"Lego City Police Station","category":"Building Sets","qty":3,"unit_price":89.99,"total":269.97,"order_date":"26/06/26","status":"Delivered","payment_method":"Google Pay","shipping_address":"23 O'Connell Street, Dublin 1","tracking_number":"IE8934927891"},{"order_id":"ST-2026-0002","customer_name":"Siobhan Murphy","email":"siobhan.murphy@eircom.net","sku":"LEG-002","item_name":"Lego Star Wars X-Wing","category":"Building Sets","qty":3,"unit_price":129.99,"total":389.97,"order_date":"09/01/26","status":"Delivered","payment_method":"Revolut","shipping_address":"5 Green Road, Cork","tracking_number":"IE4466589567"},{"order_id":"ST-2026-0003","customer_name":"Patrick O'Brien","email":"patobrien72@gmail.com","sku":"ART-005","item_name":"Origami Kit","category":"Arts & Crafts","qty":2,"unit_price":8.99,"total":17.98,"order_date":"17/05/26","status":"Delivered","payment_method":"Apple Pay","shipping_address":"12 Henry Street, Galway","tracking_number":"IE3303082117"},{"order_id":"ST-2026-0003","customer_name":"Patrick O'Brien","email":"patobrien72@gmail.com","sku":"LEG-003","item_name":"Lego Technic Crane","category":"Building Sets","qty":4,"unit_price":149.99,"total":599.96,"order_date":"18/03/26","status":"Delivered","payment_method":"Apple Pay","shipping_address":"12 Henry Street, Galway","tracking_number":"IE3303082117"},{"order_id":"ST-2026-0004","customer_name":"Aoife Ryan","email":"aoife.ryan@ucd.ie","sku":"LEG-004","item_name":"Lego Harry Potter Castle","category":"Building Sets","qty":1,"unit_price":99.99,"total":99.99,"order_date":"22/03/26","status":"Returned","payment_method":"Revolut","shipping_address":"8 Main Street, Kilkenny","tracking_number":"IE7665963761"},{"order_id":"ST-2026-0005","customer_name":"Sean Walsh","email":"walsh.sean@outlook.com","sku":"LEG-005","item_name":"Lego Classic Brick Box","category":"Building Sets","qty":3,"unit_price":49.99,"total":149.97,"order_date":"31/03/26","status":"Shipped","payment_method":"Revolut","shipping_address":"45 The Quay, Waterford","tracking_number":"IE3479708607"},{"order_id":"ST-2026-0006","customer_name":"Ciara Byrne","email":"ciarab1979@gmail.com","sku":"LEG-006","item_name":"Lego City Fire Station","category":"Building Sets","qty":1,"unit_price":79.99,"total":79.99,"order_date":"30/01/26","status":"Shipped","payment_method":"Mastercard","shipping_address":"17 Oak Avenue, Drogheda","tracking_number":"IE9786748825"},{"order_id":"ST-2026-0007","customer_name":"Declan Lynch","email":"declan.lynch@hotmail.com","sku":"LEG-007","item_name":"Lego Friends Beach House","category":"Building Sets","qty":3,"unit_price":64.99,"total":194.97,"order_date":"18/02/26","status":"Processing","payment_method":"Visa","shipping_address":"29 Church Street, Dundalk","tracking_number":""},{"order_id":"ST-2026-0007","customer_name":"Declan Lynch","email":"declan.lynch@hotmail.com","sku":"OUT-004","item_name":"Water Slide","category":"Outdoor","qty":2,"unit_price":89.99,"total":179.98,"order_date":"13/06/26","status":"Processing","payment_method":"Visa","shipping_address":"29 Church Street, Dundalk","tracking_number":""},{"order_id":"ST-2026-0008","customer_name":"Niamh McCarthy","email":"niamhmccarthy@yahoo.ie","sku":"LEG-008","item_name":"Lego Speedboat","category":"Building Sets","qty":2,"unit_price":39.99,"total":79.98,"order_date":"07/04/26","status":"Delivered","payment_method":"Apple Pay","shipping_address":"3 Pearse Square, Sligo","tracking_number":"IE4721519026"},{"order_id":"ST-2026-0009","customer_name":"Dermot O'Sullivan","email":"dosullivan@tcd.ie","sku":"ACT-001","item_name":"Marvel Spider-Man Action Figure","category":"Action Figures","qty":3,"unit_price":24.99,"total":74.97,"order_date":"03/04/26","status":"Delivered","payment_method":"Mastercard","shipping_address":"56 Shannon Street, Limerick","tracking_number":"IE8877444318"},{"order_id":"ST-2026-0010","customer_name":"Grainne Doyle","email":"grainne.doyle@ireland.com","sku":"ACT-002","item_name":"DC Batman Action Figure","category":"Action Figures","qty":3,"unit_price":29.99,"total":89.97,"order_date":"27/03/26","status":"Cancelled","payment_method":"Revolut","shipping_address":"9 Castle Road, Athlone","tracking_number":"IE2525876051"},{"order_id":"ST-2026-0011","customer_name":"Eoin Gallagher","email":"eoin.gallagher@gmail.com","sku":"ACT-003","item_name":"Marvel Avengers 2-Pack","category":"Action Figures","qty":3,"unit_price":34.99,"total":104.97,"order_date":"11/04/26","status":"Shipped","payment_method":"Revolut","shipping_address":"14 Market Square, Navan","tracking_number":"IE9896606039"},{"order_id":"ST-2026-0012","customer_name":"Maeve Kennedy","email":"maeve.kennedy@eircom.net","sku":"ACT-004","item_name":"Jurassic World Dinosaur Figure","category":"Action Figures","qty":2,"unit_price":19.99,"total":39.98,"order_date":"18/06/26","status":"Processing","payment_method":"Google Pay","shipping_address":"22 Harbour Road, Tralee","tracking_number":""},{"order_id":"ST-2026-0013","customer_name":"Fergal Quinn","email":"fergal.quinn@protonmail.com","sku":"ACT-005","item_name":"Transformers Action Figure","category":"Action Figures","qty":2,"unit_price":32.99,"total":65.98,"order_date":"10/03/26","status":"Shipped","payment_method":"Apple Pay","shipping_address":"7 Bridge Street, Dublin 8","tracking_number":"IE5996775663"},{"order_id":"ST-2026-0014","customer_name":"Orla Brennan","email":"orla.brennan@ucd.ie","sku":"BRD-001","item_name":"Monopoly Classic","category":"Board Games","qty":3,"unit_price":29.99,"total":89.97,"order_date":"22/06/26","status":"Delivered","payment_method":"Revolut","shipping_address":"31 Green Lane, Cork","tracking_number":"IE3392080953"},{"order_id":"ST-2026-0014","customer_name":"Orla Brennan","email":"orla.brennan@ucd.ie","sku":"RCC-001","item_name":"Remote Control Buggy","category":"Remote Control","qty":1,"unit_price":44.99,"total":44.99,"order_date":"05/07/26","status":"Delivered","payment_method":"Revolut","shipping_address":"31 Green Lane, Cork","tracking_number":"IE3392080953"},{"order_id":"ST-2026-0014","customer_name":"Orla Brennan","email":"orla.brennan@ucd.ie","sku":"SFT-006","item_name":"Sloth Soft Toy","category":"Soft Toys","qty":3,"unit_price":14.99,"total":44.97,"order_date":"31/05/26","status":"Delivered","payment_method":"Revolut","shipping_address":"31 Green Lane, Cork","tracking_number":"IE3392080953"},{"order_id":"ST-2026-0015","customer_name":"Cathal Fitzpatrick","email":"cathal.fitz@gmail.com","sku":"BRD-002","item_name":"Scrabble Deluxe","category":"Board Games","qty":3,"unit_price":34.99,"total":104.97,"order_date":"17/07/26","status":"Delivered","payment_method":"Mastercard","shipping_address":"48 Park Avenue, Galway","tracking_number":"IE4332894265"},{"order_id":"ST-2026-0016","customer_name":"Aisling Hogan","email":"ahogan@hotmail.com","sku":"BRD-003","item_name":"Jenga Giant","category":"Board Games","qty":1,"unit_price":24.99,"total":24.99,"order_date":"21/05/26","status":"Cancelled","payment_method":"Apple Pay","shipping_address":"11 Main Street, Limerick","tracking_number":"IE8752612686"},{"order_id":"ST-2026-0017","customer_name":"Ronan Daly","email":"ronan.daly@yahoo.ie","sku":"BRD-004","item_name":"Chess and Checkers Set","category":"Board Games","qty":3,"unit_price":19.99,"total":59.97,"order_date":"08/02/26","status":"Cancelled","payment_method":"Google Pay","shipping_address":"6 Abbey Road, Waterford","tracking_number":"IE1284277889"},{"order_id":"ST-2026-0018","customer_name":"Fiona O'Neill","email":"fiona.oneill@eircom.net","sku":"BRD-005","item_name":"Uno Card Game","category":"Board Games","qty":3,"unit_price":7.99,"total":23.97,"order_date":"02/03/26","status":"Shipped","payment_method":"Revolut","shipping_address":"33 Riverside, Kilkenny","tracking_number":"IE7439149233"},{"order_id":"ST-2026-0019","customer_name":"Brendan Nolan","email":"brendan.nolan@gmail.com","sku":"ART-001","item_name":"Crayola Ultimate Art Set","category":"Arts & Crafts","qty":4,"unit_price":24.99,"total":99.96,"order_date":"05/02/26","status":"Delivered","payment_method":"Mastercard","shipping_address":"19 The Green, Drogheda","tracking_number":"IE5908596099"},{"order_id":"ST-2026-0020","customer_name":"Sinead Joyce","email":"sinead.joyce@outlook.ie","sku":"ART-002","item_name":"Play-Doh Mega Pack","category":"Arts & Crafts","qty":2,"unit_price":12.99,"total":25.98,"order_date":"17/04/26","status":"Shipped","payment_method":"Revolut","shipping_address":"25 Kennedy Road, Dundalk","tracking_number":"IE7609857128"},{"order_id":"ST-2026-0021","customer_name":"Darragh O'Connell","email":"darragh.oconnell@protonmail.com","sku":"ART-003","item_name":"Watercolour Paint Set","category":"Arts & Crafts","qty":4,"unit_price":8.99,"total":35.96,"order_date":"10/06/26","status":"Shipped","payment_method":"Mastercard","shipping_address":"15 Main Street, Athlone","tracking_number":"IE7010379415"},{"order_id":"ST-2026-0021","customer_name":"Darragh O'Connell","email":"darragh.oconnell@protonmail.com","sku":"SCI-004","item_name":"Microscope Set","category":"Science & STEM","qty":1,"unit_price":44.99,"total":44.99,"order_date":"13/07/26","status":"Shipped","payment_method":"Mastercard","shipping_address":"15 Main Street, Athlone","tracking_number":"IE7010379415"},{"order_id":"ST-2026-0022","customer_name":"Clodagh Sheehan","email":"clodagh.sheehan@gmail.com","sku":"ART-004","item_name":"Glitter Art Set","category":"Arts & Crafts","qty":2,"unit_price":6.99,"total":13.98,"order_date":"06/06/26","status":"Processing","payment_method":"Google Pay","shipping_address":"2 The Square, Navan","tracking_number":""},{"order_id":"ST-2026-0023","customer_name":"Padraig McDonagh","email":"padraig.mcdonagh@eircom.net","sku":"ART-005","item_name":"Origami Kit","category":"Arts & Crafts","qty":4,"unit_price":8.99,"total":35.96,"order_date":"07/01/26","status":"Returned","payment_method":"Revolut","shipping_address":"38 Main Street, Tralee","tracking_number":"IE1470939445"},{"order_id":"ST-2026-0024","customer_name":"Deirdre O'Connor","email":"deirdre.oconnor@tcd.ie","sku":"OUT-001","item_name":"Razor Scooter","category":"Outdoor","qty":2,"unit_price":59.99,"total":119.98,"order_date":"01/07/26","status":"Processing","payment_method":"Revolut","shipping_address":"10 Oakwood Drive, Dublin 15","tracking_number":""},{"order_id":"ST-2026-0025","customer_name":"Colm McCarthy","email":"colm.mccarthy@gmail.com","sku":"OUT-002","item_name":"Trampoline 8ft","category":"Outdoor","qty":4,"unit_price":199.99,"total":799.96,"order_date":"21/02/26","status":"Delivered","payment_method":"Apple Pay","shipping_address":"21 Church Avenue, Cork","tracking_number":"IE3561557300"},{"order_id":"ST-2026-0026","customer_name":"Emer Reilly","email":"reilly.e@gmail.com","sku":"OUT-003","item_name":"Kids Basketball Hoop","category":"Outdoor","qty":4,"unit_price":44.99,"total":179.96,"order_date":"25/04/26","status":"Delivered","payment_method":"Revolut","shipping_address":"4 Castle Street, Galway","tracking_number":"IE5047709743"},{"order_id":"ST-2026-0027","customer_name":"Kevin Malone","email":"kevin.malone@yahoo.ie","sku":"OUT-004","item_name":"Water Slide","category":"Outdoor","qty":1,"unit_price":89.99,"total":89.99,"order_date":"25/02/26","status":"Returned","payment_method":"Visa","shipping_address":"16 Hill Street, Limerick","tracking_number":"IE8047877267"},{"order_id":"ST-2026-0028","customer_name":"Nuala Ryan","email":"nuala.ryan@eircom.net","sku":"OUT-005","item_name":"Kids Gardening Set","category":"Outdoor","qty":3,"unit_price":19.99,"total":59.97,"order_date":"08/05/26","status":"Cancelled","payment_method":"Apple Pay","shipping_address":"30 The Crescent, Waterford","tracking_number":"IE2867302554"},{"order_id":"ST-2026-0028","customer_name":"Nuala Ryan","email":"nuala.ryan@eircom.net","sku":"SFT-007","item_name":"Dragon Plush","category":"Soft Toys","qty":2,"unit_price":24.99,"total":49.98,"order_date":"10/05/26","status":"Cancelled","payment_method":"Apple Pay","shipping_address":"30 The Crescent, Waterford","tracking_number":"IE2867302554"},{"order_id":"ST-2026-0029","customer_name":"Lorcan Dunne","email":"lorcan.dunne@hotmail.com","sku":"BAB-001","item_name":"Fisher-Price Baby Gym","category":"Baby & Toddler","qty":1,"unit_price":39.99,"total":39.99,"order_date":"21/04/26","status":"Delivered","payment_method":"Revolut","shipping_address":"13 Riverside Drive, Kilkenny","tracking_number":"IE4919706735"},{"order_id":"ST-2026-0030","customer_name":"Roisin Flynn","email":"roisin.flynn@gmail.com","sku":"BAB-002","item_name":"Soft Baby Blocks","category":"Baby & Toddler","qty":3,"unit_price":16.99,"total":50.97,"order_date":"12/02/26","status":"Delivered","payment_method":"PayPal","shipping_address":"27 Harbour View, Drogheda","tracking_number":"IE1854316681"},{"order_id":"ST-2026-0031","customer_name":"Eamon Power","email":"eamon.power@protonmail.com","sku":"BAB-003","item_name":"Musical Activity Table","category":"Baby & Toddler","qty":2,"unit_price":39.99,"total":79.98,"order_date":"08/07/26","status":"Returned","payment_method":"PayPal","shipping_address":"6 Railway Road, Dundalk","tracking_number":"IE9592390865"},{"order_id":"ST-2026-0032","customer_name":"Grainne Brady","email":"gbrady@tcd.ie","sku":"BAB-004","item_name":"Baby Walker","category":"Baby & Toddler","qty":4,"unit_price":34.99,"total":139.96,"order_date":"22/01/26","status":"Processing","payment_method":"Visa","shipping_address":"20 College Green, Sligo","tracking_number":""},{"order_id":"ST-2026-0033","customer_name":"Tiernan Kinsella","email":"tiernan.kinsella@gmail.com","sku":"BAB-005","item_name":"Sensory Play Mat","category":"Baby & Toddler","qty":1,"unit_price":29.99,"total":29.99,"order_date":"01/01/26","status":"Delivered","payment_method":"PayPal","shipping_address":"35 Mill Road, Athlone","tracking_number":"IE9285415473"},{"order_id":"ST-2026-0034","customer_name":"Ailbhe Murray","email":"ailbhe.murray@eircom.net","sku":"RCC-001","item_name":"Remote Control Buggy","category":"Remote Control","qty":2,"unit_price":44.99,"total":89.98,"order_date":"25/05/26","status":"Delivered","payment_method":"Google Pay","shipping_address":"18 Green Park, Navan","tracking_number":"IE1248786714"},{"order_id":"ST-2026-0035","customer_name":"Fionn Keane","email":"fionn.keane@outlook.ie","sku":"LEG-007","item_name":"Lego Friends Beach House","category":"Building Sets","qty":2,"unit_price":64.99,"total":129.98,"order_date":"27/01/26","status":"Delivered","payment_method":"Apple Pay","shipping_address":"44 Quay Road, Tralee","tracking_number":"IE9957813353"},{"order_id":"ST-2026-0035","customer_name":"Fionn Keane","email":"fionn.keane@outlook.ie","sku":"RCC-002","item_name":"RC Racing Car","category":"Remote Control","qty":1,"unit_price":34.99,"total":34.99,"order_date":"14/01/26","status":"Delivered","payment_method":"Apple Pay","shipping_address":"44 Quay Road, Tralee","tracking_number":"IE9957813353"},{"order_id":"ST-2026-0036","customer_name":"Orfhlaith McMahon","email":"orfhlaith.mcmahon@gmail.com","sku":"RCC-003","item_name":"RC Helicopter","category":"Remote Control","qty":1,"unit_price":54.99,"total":54.99,"order_date":"27/05/26","status":"Delivered","payment_method":"Revolut","shipping_address":"9 Main Street, Dublin 2","tracking_number":"IE1540137296"},{"order_id":"ST-2026-0037","customer_name":"Cian Farrell","email":"cian.farrell@ucd.ie","sku":"RCC-004","item_name":"RC Monster Truck","category":"Remote Control","qty":4,"unit_price":49.99,"total":199.96,"order_date":"29/04/26","status":"Delivered","payment_method":"Google Pay","shipping_address":"24 Patrick Street, Cork","tracking_number":"IE6004182187"},{"order_id":"ST-2026-0038","customer_name":"Saoirse Cullen","email":"saoirse.cullen@yahoo.ie","sku":"SCI-001","item_name":"National Geographic Science Kit","category":"Science & STEM","qty":4,"unit_price":34.99,"total":139.96,"order_date":"17/01/26","status":"Delivered","payment_method":"Google Pay","shipping_address":"5 Ash Street, Galway","tracking_number":"IE5141907136"},{"order_id":"ST-2026-0039","customer_name":"Aidan Egan","email":"aidan.egan@eircom.net","sku":"SCI-002","item_name":"Crystal Growing Kit","category":"Science & STEM","qty":2,"unit_price":22.99,"total":45.98,"order_date":"05/03/26","status":"Delivered","payment_method":"Apple Pay","shipping_address":"32 Hillcrest, Limerick","tracking_number":"IE8357059814"},{"order_id":"ST-2026-0040","customer_name":"Meadhbh O'Grady","email":"meadhbh.ogrady@gmail.com","sku":"ACT-004","item_name":"Jurassic World Dinosaur Figure","category":"Action Figures","qty":1,"unit_price":19.99,"total":19.99,"order_date":"14/03/26","status":"Delivered","payment_method":"Visa","shipping_address":"11 Sea Road, Waterford","tracking_number":"IE7517938612"},{"order_id":"ST-2026-0040","customer_name":"Meadhbh O'Grady","email":"meadhbh.ogrady@gmail.com","sku":"SCI-003","item_name":"Volcano Science Kit","category":"Science & STEM","qty":3,"unit_price":26.99,"total":80.97,"order_date":"03/05/26","status":"Delivered","payment_method":"Visa","shipping_address":"11 Sea Road, Waterford","tracking_number":"IE7517938612"}],
+"training":[{"category":"Product Search","query":"Show me Lego","expected_answer_pattern":"Here are the LEGO sets we have in stock:\n- **LEGO City Fire Station** – €79.99 (In Stock: 25)\n- **LEGO Technic Porsche** – €149.99 (In Stock: 12)\n- **LEGO Friends Heartlake School** – €79.99 (In Stock: 20)\n- **LEGO Star Wars Millennium Falcon** – €169.99 (In Stock: 5)\n\nWould you like me to sort by price or age recommendation?","tone":"Helpful","use_case":"customer_query"},{"category":"Product Search","query":"Do you have any board games?","expected_answer_pattern":"We have a great selection of board games! Here are a few:\n- **Monopoly Classic** – €29.99 (Ages 8+)\n- **Cluedo** – €24.99 (Ages 10+)\n- **Jenga Classic** – €19.99 (Ages 6+)\n- **Exploding Kittens** – €14.99 (Ages 7+)\n\nWould you like to filter by age or price range?","tone":"Enthusiastic","use_case":"customer_query"},{"category":"Product Search","query":"I'm looking for Paw Patrol toys","expected_answer_pattern":"Great choice! Here's what we have in Paw Patrol:\n- **Paw Patrol Rescue Tower** – €59.99 (In Stock: 12)\n- **Paw Patrol Figures Set** – €24.99 (In Stock: 22)\n\nWould you like me to show you more details on any of these?","tone":"Friendly","use_case":"customer_query"},{"category":"Product Search","query":"What soft toys do you sell?","expected_answer_pattern":"We have a lovely range of soft toys. Here's a selection:\n\n**Baby Safe (0+):**\n- Elephant Softee 45cm – €29.99\n\n**Ages 3+:**\n- Squishmallows 10-inch – €14.99 (In Stock: 50)\n- Giant Teddy Bear 1.2m – €49.99 (In Stock: 10)\n- Rainbow Unicorn Plush 40cm – €24.99\n- Fluffy Cat Plush 30cm – €19.99\n- Dinosaur Plush T-Rex 50cm – €34.99\n\nWhich age group are you shopping for?","tone":"Warm","use_case":"customer_query"},{"category":"Price & Budget","query":"Lego under €50","expected_answer_pattern":"Here are LEGO sets under €50:\n- **LEGO Duplo Farm** – €44.99 (Ages 2+, Stock: 30)\n- **LEGO Minecraft The Bee Cottage** – €39.99 (Ages 8+, Stock: 10)\n- **LEGO Speed Champions Lamborghini** – €24.99 (Ages 7+, Stock: 42)\n- **LEGO Classic Creative Box** – €34.99 (Ages 4+, Stock: 45)\n\nWould you like to narrow this down by age recommendation?","tone":"Helpful","use_case":"customer_query"},{"category":"Price & Budget","query":"What's the cheapest drone?","expected_answer_pattern":"The most affordable drone we currently have is:\n\n**RC Helicopter with Gyro** – €39.99\n- Ages 8+\n- 3-channel with LED lights\n- In Stock: 14\n\nWe also have an **HD Camera Drone with GPS** starting from €149.99 if you'd like something with a camera!","tone":"Informative","use_case":"customer_query"},{"category":"Price & Budget","query":"I have €100, what can I get?","expected_answer_pattern":"With a €100 budget, here are some great options:\n\n**Tech & Gadgets:**\n- **HD Camera Drone with GPS** – €149.99 (a bit over budget)\n- **Sphero BOLT Coding Robot** – €149.99 (a bit over budget)\n\n**Building Sets:**\n- **LEGO Harry Potter Hogwarts Castle** – €99.99\n- **LEGO Marvel Avengers Tower** – €99.99\n- **LEGO Icons Vespa 125** – €99.99\n\n**Outdoor:**\n- **RoyalBaby 16-Inch Kids Bike** – €89.99\n\nWould you like me to show you best-sellers in this range?","tone":"Suggestive","use_case":"customer_query"},{"category":"Age-based Recommendations","query":"What's good for a 4-year-old?","expected_answer_pattern":"For a 4-year-old, here are our top-rated picks:\n\n- **LEGO Classic Creative Box** – €34.99 ⭐4.8/5\n- **LEGO Duplo Farm** – €44.99 ⭐4.8/5\n- **My Little Pony Friendship Castle** – €44.99 ⭐4.6/5\n- **PAW Patrol Adventure Bay Set** – €49.99 ⭐4.8/5\n- **Hot Wheels 20-Car Gift Pack** – €19.99 ⭐4.5/5\n\nAll of these are suitable for ages 3–4. Is this for a birthday or just a treat?","tone":"Cheerful","use_case":"customer_query"},{"category":"Age-based Recommendations","query":"Gift for a 10-year-old boy","expected_answer_pattern":"Great, here are the most popular picks for a 10-year-old boy:\n\n**LEGO:**\n- **LEGO Technic Porsche 911** – €149.99 (Ages 10+)\n- **LEGO Star Wars Millennium Falcon** – €169.99 (Ages 9+)\n\n**RC & Action:**\n- **HD Camera Drone with GPS** – €149.99 (Ages 14+)\n- **RC Battle Tank** – €54.99 (Ages 8+)\n\n**Science:**\n- **Sphero BOLT Coding Robot** – €149.99 (Ages 8+)\n- **National Geographic Microscope Set** – €54.99 (Ages 8+)\n\nWhat's your budget? I can narrow it down further!","tone":"Energetic","use_case":"customer_query"},{"category":"Age-based Recommendations","query":"Something for a baby","expected_answer_pattern":"For babies (0–24 months), here are our most popular items:\n\n- **Fisher-Price Laugh & Learn Chair** – €34.99\n- **VTech Touch & Learn Elephant** – €22.99\n- **Sensory Soft Play Cube Set** – €24.99\n- **Baby Gym Play Mat with Toys** – €54.99\n\nAll of these are designed for sensory development and safety. Are you looking for a gift or something specific?","tone":"Gentle","use_case":"customer_query"},{"category":"Order Tracking","query":"Track my order","expected_answer_pattern":"I'd be happy to help track your order! To look it up, I'll need either:\n- Your **Order ID** (starts with ST-2026-xxxx)\n- Or the **email address** used at checkout\n\nCould you please provide one of those?","tone":"Helpful","use_case":"customer_query"},{"category":"Order Tracking","query":"Where's my order ST-2026-0001?","expected_answer_pattern":"Let me check that for you!\n\n**Order ST-2026-0001**\n- **Status:** Delivered\n- **Items:** Lego City Police Station x3\n- **Total:** €269.97\n- **Date:** 26/06/26\n- **Tracking Number:** IE8934927891\n- **Shipping to:** 23 O'Connell Street, Dublin 1\n\nTrack it live at [dpd.ie](https://dpd.ie) — would you like me to help with anything else?","tone":"Reassuring","use_case":"customer_query"},{"category":"Order Tracking","query":"What did Sarah Murphy order?","expected_answer_pattern":"Let me look up the order history for Sarah Murphy…\n\n**Recent Orders:**\n1. **Order ST-2026-0042** – Delivered 10 July\n   - Paw Patrol Rescue Tower – €59.99\n   - Squishmallows 10-inch – €14.99\n\n2. **Order ST-2026-0067** – Shipped 18 July\n   - LEGO Friends Heartlake School – €79.99\n\nWould you like tracking details for the shipped order?","tone":"Professional","use_case":"customer_query"},{"category":"Order Tracking","query":"When will my order arrive?","expected_answer_pattern":"I'd be happy to check the ETA for your order! Could you please share your **Order ID** so I can look it up?\n\nOnce I have it, here's what I'll check:\n- **Processing** → Usually ships in **1–2 business days**\n- **Shipped** → Delivery in **2–5 business days** depending on location\n- **Delayed** → I'll check with the courier and update you","tone":"Helpful","use_case":"customer_query"},{"category":"Returns & Cancellations","query":"Can I return this?","expected_answer_pattern":"Of course! Here's our returns policy:\n\n- **Returns Window:** 30 days from delivery\n- **Condition:** Items must be unused and in original packaging\n- **Process:** We'll provide a free returns label\n\nTo get started, could you please confirm your **Order ID** and which item you'd like to return?","tone":"Empathetic","use_case":"customer_query"},{"category":"Returns & Cancellations","query":"I want to cancel my order","expected_answer_pattern":"I understand you'd like to cancel. Here's how it works:\n\n- **Before dispatch:** We can cancel immediately and issue a full refund within 3–5 business days.\n- **After dispatch:** We can't cancel, but you can return it within 30 days of delivery.\n\nCould you please provide your **Order ID** so I can check the current status?","tone":"Helpful","use_case":"customer_query"},{"category":"Returns & Cancellations","query":"My toy arrived broken","expected_answer_pattern":"Oh no, I'm really sorry to hear that! Let me help you get this sorted right away.\n\nHere's what we'll do:\n1. **Return:** Free returns label emailed to you\n2. **Refund/Replacement:** Your choice — we'll process it as soon as the item is scanned by the courier\n3. **Timeline:** Refund in 3–5 business days, replacement shipped within 24 hours\n\nCould you please share your **Order ID** and let me know if you'd prefer a **refund or replacement**?","tone":"Apologetic","use_case":"customer_query"},{"category":"Stock & Availability","query":"Are the Pok\u00e9mon cards in stock?","expected_answer_pattern":"Let me check stock for similar items…\n\n- **Pok\u00e9mon Battle Figure Set** – €19.99 — **In Stock: 40**\n- **PAW Patrol Adventure Bay Set** – €49.99 — **In Stock: 20**\n- **Marvel Spider-Man Action Figure** – €24.99 — **In Stock: 35**\n\nWe've plenty in stock! Would you like me to reserve any for you?","tone":"Upbeat","use_case":"customer_query"},{"category":"Stock & Availability","query":"Is this in store?","expected_answer_pattern":"Smyths Toys operates as an **online-only store**, so we don't have a physical shop to visit. However, we offer:\n\n- **Free Delivery** on orders over €25\n- **Express Delivery** (1–2 days) for €4.99\n- **Standard Delivery** (3–5 days) for €2.99\n\nWhich item are you looking at? I can check stock and give you the fastest delivery option!","tone":"Informative","use_case":"customer_query"},{"category":"Stock & Availability","query":"When will you restock Lego?","expected_answer_pattern":"Let me check the current LEGO stock situation…\n\n- **LEGO Technic Porsche 911** – **Low stock (12 left)**\n- **LEGO Creator Medieval Castle** – **Low stock (8 left)**\n- **LEGO Star Wars Millennium Falcon** – **Low stock (5 left)**\n- **LEGO Icons Vespa 125** – **Low stock (6 left)**\n\nFor out-of-stock items, you can **backorder** them and we'll dispatch as soon as stock arrives (usually within 7–14 days). Would you like me to set up a backorder for any of these?","tone":"Helpful","use_case":"customer_query"},{"category":"General Store Info","query":"What payment methods do you accept?","expected_answer_pattern":"We accept the following payment methods:\n\n- **Visa** / **Mastercard** / **American Express**\n- **PayPal**\n- **Revolut**\n- **Apple Pay** / **Google Pay**\n- **Klarna** (Buy Now, Pay Later on orders over €50)\n\nAll payments are processed securely. Is there anything else I can help you with?","tone":"Informative","use_case":"customer_query"},{"category":"General Store Info","query":"How long does delivery take?","expected_answer_pattern":"Here's our delivery breakdown:\n\n**Processing Time:** 1–2 business days (all orders)\n\n**Delivery Options:**\n- **Standard (€2.99):** 3–5 business days\n- **Express (€4.99):** 1–2 business days\n- **Free (Orders over €25):** 3–5 business days\n\n**Remote areas** may take an extra 1–2 days. You'll receive a tracking link once your order ships!","tone":"Helpful","use_case":"customer_query"},{"category":"General Store Info","query":"Do you have a loyalty programme?","expected_answer_pattern":"We don't currently have a loyalty programme, but it's something we're exploring! In the meantime, here's how you can save:\n\n- **Sign up for our newsletter** — you'll get 10% off your first order and early access to sales\n- **Check our Deals page** — updated weekly with new offers\n- **Free delivery** on all orders over €25\n\nWould you like me to sign you up for the newsletter?","tone":"Friendly","use_case":"customer_query"},{"category":"Gift Recommendations","query":"What's a good birthday gift for an 8-year-old?","expected_answer_pattern":"For an 8-year-old, here are our top-rated birthday picks:\n\n- **LEGO Marvel Avengers Tower** – €99.99 ⭐4.8/5 (Ages 8+)\n- **LEGO Creator Medieval Castle** – €109.99 ⭐4.6/5 (Ages 8+)\n- **Cruiser Skateboard Complete** – €39.99 ⭐4.5/5 (Ages 8+)\n- **HC Helicopter with Gyro** – €39.99 ⭐4.4/5 (Ages 8+)\n- **National Geographic Microscope Set** – €54.99 ⭐4.8/5 (Ages 8+)\n\nDo you have a budget in mind? I can tailor the suggestions further!","tone":"Suggestive","use_case":"customer_query"},{"category":"Gift Recommendations","query":"What's popular right now?","expected_answer_pattern":"Here's what's trending at Smyths Toys right now:\n\n**Top-Selling Toys:**\n1. **LEGO Technic Porsche 911** – €149.99 ⭐4.9/5\n2. **Bluey Family Home Playset** – €39.99 ⭐4.9/5\n3. **LEGO Star Wars Millennium Falcon** – €169.99 ⭐4.9/5\n4. **Squishmallows 12-Inch Plush** – €19.99 ⭐4.8/5\n5. **Fisher-Price Laugh & Learn Chair** – €34.99 ⭐4.8/5\n\nThese are our highest-rated items across all categories! Would you like me to show you what's on sale?","tone":"Excited","use_case":"customer_query"}]
 };
 </script>
 <script>
@@ -265,18 +294,6 @@ const GROQ_KEY = '__GROQ_API_KEY__';
 const GROQ_MODEL = 'llama3-70b-8192';
 
 const CATEGORIES = ['LEGO & Building','Action Figures & Dolls','Board Games & Puzzles','Arts & Crafts','Outdoor & Sports','Baby & Toddler','Remote Control','Science & Learning','Soft Toys & Plush'];
-
-const UNSplash = {
-  'LEGO & Building':'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=300&q=80',
-  'Action Figures & Dolls':'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=300&q=80',
-  'Board Games & Puzzles':'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=300&q=80',
-  'Arts & Crafts':'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=300&q=80',
-  'Outdoor & Sports':'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=300&q=80',
-  'Baby & Toddler':'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=300&q=80',
-  'Remote Control':'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=300&q=80',
-  'Science & Learning':'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=300&q=80',
-  'Soft Toys & Plush':'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=300&q=80'
-};
 
 const PILLS = [
   {label:'Show me Lego',icon:'fa-cubes',kw:'lego'},
@@ -438,7 +455,7 @@ function buildMaps(){
 
 function updateEmptyState(){
   if(products.length===0){
-    refEmpty.innerHTML='<i class="fas fa-database" style="font-size:1.2rem;color:#E63946;display:block;margin-bottom:10px"></i>No products loaded yet. Ask a question!';
+    refEmpty.innerHTML='<i class="fas fa-database" style="font-size:1.4rem;color:#ED1C24;display:block;margin-bottom:10px"></i>No products loaded yet. Ask a question!';
   }
 }
 
@@ -508,9 +525,7 @@ async function fetchSheet(silent){
 }
 
 function parseSheetData(rows){
-  // Determine which tab based on headers
   const first=rows[0];
-  // Products tab
   if(first.sku&&first.name&&first.price){
     return {
       products: rows.map(r=>({
@@ -519,11 +534,9 @@ function parseSheetData(rows){
         stock:parseInt(r.stock)||0,rating:parseFloat(r.rating)||0,
         description:r.description||'',tags:r.tags||''
       })).filter(p=>p.sku),
-      orders:[],
-      training:[]
+      orders:[],training:[]
     };
   }
-  // Orders tab
   if(first.order_id&&first.customer_name){
     return {
       products:[],
@@ -537,16 +550,11 @@ function parseSheetData(rows){
         shipping_address:r.shipping_address||'',
         tracking_number:r.tracking_number||''
       })).filter(o=>o.order_id),
-      products:[],
-      training:[]
+      products:[],training:[]
     };
   }
-  // Training tab
   if(first.category&&first.query){
-    return {
-      products:[],orders:[],
-      training: rows
-    };
+    return {products:[],orders:[],training: rows};
   }
   return null;
 }
@@ -569,9 +577,9 @@ function fmtPrice(v){
 }
 
 // ============================================================
-//  MCP QUERY ENGINE
+//  TOY ENGINE QUERY
 // ============================================================
-function mcpQuery(resource){
+function toyQuery(resource){
   const parts=resource.replace('toy-mcp://','').split('/');
   if(parts[0]==='products'){
     if(parts[1]==='cat'&&parts[2])return products.filter(p=>p.category===parts[2]);
@@ -624,25 +632,25 @@ function mcpQuery(resource){
 }
 
 // ============================================================
-//  MCP VISUALIZATION
+//  TOY ENGINE VISUALIZATION
 // ============================================================
-function clearMCP(){mcpFlow.innerHTML='';mcpEmpty.style.display='none'}
-function addMCPStep(icon,label,detail,cls){
+function clearEngine(){mcpFlow.innerHTML='';mcpEmpty.style.display='none'}
+function addEngineStep(icon,label,detail,cls){
   mcpEmpty.style.display='none';
   const d=document.createElement('div');d.className='mcp-step';
   d.innerHTML=`<span class="icon ${cls}"><i class="fas ${icon}"></i></span><span class="label">${label}</span>${detail?`<span class="detail">${detail}</span>`:''}`;
   mcpFlow.appendChild(d);mcpFlow.scrollTop=mcpFlow.scrollHeight;
 }
-function addMCPArrow(){const d=document.createElement('span');d.className='mcp-arrow';d.innerHTML='<i class="fas fa-chevron-down"></i>';mcpFlow.appendChild(d);mcpFlow.scrollTop=mcpFlow.scrollHeight}
+function addEngineArrow(){const d=document.createElement('span');d.className='mcp-arrow';d.innerHTML='<i class="fas fa-chevron-down"></i>';mcpFlow.appendChild(d);mcpFlow.scrollTop=mcpFlow.scrollHeight}
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
 
-async function runMCPFlow(query,results,type){
-  clearMCP();
-  addMCPStep('fa-search','Discover','Toy Store Server','discover');await delay(100);
-  addMCPArrow();
+async function runEngineFlow(query,results,type){
+  clearEngine();
+  addEngineStep('fa-search','Scanning','Toy Store Inventory','discover');await delay(100);
+  addEngineArrow();
 
   const cats=CATEGORIES.filter(c=>products.some(p=>p.category===c)).length;
-  addMCPStep('fa-clipboard-list','Discover',`${products.length} products · ${cats} categories`,'discover');await delay(80);
+  addEngineStep('fa-clipboard-list','Discover',`${products.length} products · ${cats} categories`,'discover');await delay(80);
 
   let label='toy-mcp://'+type;
   const lq=query.toLowerCase();
@@ -660,12 +668,25 @@ async function runMCPFlow(query,results,type){
   else if(lq.includes('cheap')||lq.includes('under')||lq.includes('€')||lq.includes('euro')||lq.includes('budget')||lq.includes('affordable'))label='toy-mcp://products';
   else if(CATEGORIES.some(c=>lq.includes(c.toLowerCase())))label='toy-mcp://products';
 
-  addMCPArrow();
-  addMCPStep('fa-database','Read',label,'read');await delay(80);
-  addMCPArrow();
-  addMCPStep('fa-check-circle','Result',`${results.length} items`,'result');await delay(60);
-  addMCPArrow();
-  addMCPStep('fa-brain','Groq LLM','Generating...','llm');
+  addEngineArrow();
+  addEngineStep('fa-database','Read',label,'read');await delay(80);
+  addEngineArrow();
+  addEngineStep('fa-check-circle','Result',`${results.length} items`,'result');await delay(60);
+  addEngineArrow();
+  addEngineStep('fa-brain','Groq AI','Crafting reply...','llm');
+}
+
+// ============================================================
+//  CONFETTI
+// ============================================================
+function burstConfetti(){
+  const colors=['#ED1C24','#FBEA07','#231F20','#fff','#ff6b6b','#ffd93d'];
+  for(let i=0;i<30;i++){
+    const e=document.createElement('div');e.className='confetti';
+    const size=5+Math.random()*8;
+    e.style.cssText=`left:${Math.random()*100}vw;top:-10px;width:${size}px;height:${size}px;background:${colors[i%colors.length]};border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*.5}s`;
+    document.body.appendChild(e);setTimeout(()=>e.remove(),4000);
+  }
 }
 
 // ============================================================
@@ -685,12 +706,12 @@ function showTyping(){typing.classList.add('show');chat.scrollTop=chat.scrollHei
 function hideTyping(){typing.classList.remove('show')}
 
 function sparkleBurst(x,y){
-  const colors=['#E63946','#FFD166','#1B3A5C','#fff'];
+  const colors=['#ED1C24','#FBEA07','#231F20','#fff'];
   for(let i=0;i<8;i++){
     const e=document.createElement('div');e.className='sparkle';
-    const a=Math.random()*360;const d=15+Math.random()*20;
+    const a=Math.random()*360;const d=18+Math.random()*22;
     e.style.cssText=`left:${x}px;top:${y}px;--tx:${Math.cos(a*Math.PI/180)*d}px;--ty:${Math.sin(a*Math.PI/180)*d}px;background:${colors[i%colors.length]}`;
-    document.body.appendChild(e);setTimeout(()=>e.remove(),600);
+    document.body.appendChild(e);setTimeout(()=>e.remove(),700);
   }
 }
 
@@ -704,8 +725,8 @@ function showRefProducts(results){
   if(currentTab==='orders')return;
   if(!results||results.length===0){
     refEmpty.style.display='block';
-    if(!results) refEmpty.innerHTML='<i class="fas fa-search" style="font-size:1.2rem;color:#E63946;display:block;margin-bottom:10px"></i>Ask me about toys!';
-    else refEmpty.innerHTML='<i class="fas fa-box-open" style="font-size:1.2rem;color:#E63946;display:block;margin-bottom:10px"></i>No products found. Try a different search!';
+    if(!results) refEmpty.innerHTML='<i class="fas fa-search" style="font-size:1.4rem;color:#ED1C24;display:block;margin-bottom:10px"></i>Ask me about toys!';
+    else refEmpty.innerHTML='<i class="fas fa-box-open" style="font-size:1.4rem;color:#ED1C24;display:block;margin-bottom:10px"></i>No products found. Try a different search!';
     return;
   }
   refEmpty.style.display='none';
@@ -742,13 +763,12 @@ function showRefOrders(results){
   if(currentTab==='products')return;
   if(!results||results.length===0){
     refEmpty.style.display='block';
-    if(!results) refEmpty.innerHTML='<i class="fas fa-truck" style="font-size:1.2rem;color:#E63946;display:block;margin-bottom:10px"></i>Ask me to track an order!';
-    else refEmpty.innerHTML='<i class="fas fa-search" style="font-size:1.2rem;color:#E63946;display:block;margin-bottom:10px"></i>No orders found. Try a different search!';
+    if(!results) refEmpty.innerHTML='<i class="fas fa-truck" style="font-size:1.4rem;color:#ED1C24;display:block;margin-bottom:10px"></i>Ask me to track an order!';
+    else refEmpty.innerHTML='<i class="fas fa-search" style="font-size:1.4rem;color:#ED1C24;display:block;margin-bottom:10px"></i>No orders found. Try a different search!';
     return;
   }
   refEmpty.style.display='none';
 
-  // Group by order_id
   const grouped={};
   results.forEach(o=>{
     if(!grouped[o.order_id])grouped[o.order_id]=[];
@@ -766,12 +786,12 @@ function showRefOrders(results){
           <div class="ord-id">${oid}</div>
           <div class="ord-status ${first.status}">${first.status}</div>
         </div>
-        <div class="ord-customer"><i class="fas fa-user" style="color:#E63946;width:14px;font-size:.6rem"></i> ${first.customer_name}</div>
-        <div class="ord-detail"><i class="fas fa-calendar" style="color:#E63946;width:14px;font-size:.6rem"></i> ${first.order_date} · ${first.payment_method}</div>
+        <div class="ord-customer"><i class="fas fa-user" style="color:#ED1C24;width:14px;font-size:.6rem"></i> ${first.customer_name}</div>
+        <div class="ord-detail"><i class="fas fa-calendar" style="color:#ED1C24;width:14px;font-size:.6rem"></i> ${first.order_date} · ${first.payment_method}</div>
         <div class="ord-items">${items.map(it=>`${it.item_name||'Item'} x${it.qty}`).join(', ')}</div>
         <div class="ord-total">€${fmtPrice(total)}</div>
-        ${first.tracking_number?`<div style="font-size:.62rem;color:#999;margin-top:3px"><i class="fas fa-truck"></i> Tracking: ${first.tracking_number}</div>`:''}
-        ${first.shipping_address?`<div style="font-size:.62rem;color:#999;margin-top:1px"><i class="fas fa-map-pin"></i> ${first.shipping_address}</div>`:''}
+        ${first.tracking_number?`<div style="font-size:.62rem;color:#999;margin-top:3px"><i class="fas fa-truck" style="color:#ED1C24"></i> Tracking: ${first.tracking_number}</div>`:''}
+        ${first.shipping_address?`<div style="font-size:.62rem;color:#999;margin-top:1px"><i class="fas fa-map-pin" style="color:#ED1C24"></i> ${first.shipping_address}</div>`:''}
       </div>
     `;
     refBody.appendChild(card);
@@ -829,7 +849,6 @@ RULES:
 function generateLocal(query,results,type){
   const lq=query.toLowerCase();
 
-  // ── Order queries ──
   if(type==='orders'||lq.includes('order')||lq.includes('track')||lq.includes('delivery')||lq.includes('shipped')){
     if(!results||results.length===0){
       if(lq.includes('track')||lq.includes('where')){
@@ -873,12 +892,10 @@ function generateLocal(query,results,type){
     return r;
   }
 
-  // ── Empty results ──
   if(!results||results.length===0){
     return "I'm sorry, I couldn't find anything matching that in our catalogue. Could you try asking differently? For example, try \"Lego\", \"board games\", or \"gift for a 6-year-old\".";
   }
 
-  // ── Price/budget queries ──
   const maxPrice=parseFloat(lq.match(/under\s*€?(\d+)/i)?.[1]||lq.match(/€?(\d+)\s*euro/i)?.[1]||'');
   if(!isNaN(maxPrice)&&maxPrice>0){
     const filtered=results.filter(p=>p.price<=maxPrice);
@@ -891,7 +908,6 @@ function generateLocal(query,results,type){
     return r;
   }
 
-  // ── Age-based ──
   const ageMatch=lq.match(/(\d+)[- ]year[- ]old/i)||lq.match(/for a (\d+)/i);
   if(ageMatch){
     const age=parseInt(ageMatch[1]);
@@ -907,7 +923,6 @@ function generateLocal(query,results,type){
     return r;
   }
 
-  // ── Popular / bestsellers ──
   if(lq.includes('popular')||lq.includes('best')||lq.includes('top rated')||lq.includes('trending')){
     const sorted=[...results].sort((a,b)=>b.rating-a.rating);
     let r=`Here are our most popular items:\n\n`;
@@ -918,7 +933,6 @@ function generateLocal(query,results,type){
     return r;
   }
 
-  // ── Gift queries ──
   if(lq.includes('gift')||lq.includes('birthday')||lq.includes('present')){
     const sorted=[...results].sort((a,b)=>b.rating-a.rating);
     let r=`Here are some great gift ideas:\n\n`;
@@ -929,7 +943,6 @@ function generateLocal(query,results,type){
     return r;
   }
 
-  // ── Category summary ──
   const cats=[...new Set(results.map(p=>p.category))];
   const prices=results.map(p=>p.price);
   const min=Math.min(...prices);const max=Math.max(...prices);
@@ -964,10 +977,8 @@ async function handleCommand(text){
     let type='products';
     let resource='toy-mcp://products';
 
-    // Determine if order query
     if(lq.includes('track')||lq.includes('order')||lq.includes('delivery')||lq.includes('shipped')||lq.includes('status')||lq.includes('ST-2026')){
       type='orders';
-      // Extract order ID
       const oidMatch=lq.match(/ST-2026-\d+/i);
       if(oidMatch){resource=`toy-mcp://orders/id/${oidMatch[0]}`;}
       else {
@@ -976,7 +987,6 @@ async function handleCommand(text){
         else {resource='toy-mcp://orders';}
       }
     }
-    // Category detection
     else if(lq.includes('lego')||lq.includes('brick'))resource='toy-mcp://products/cat/LEGO & Building';
     else if(lq.includes('board game')||lq.includes('puzzle')||lq.includes('jenga')||lq.includes('monopoly')||lq.includes('chess'))resource='toy-mcp://products/cat/Board Games & Puzzles';
     else if(lq.includes('baby')||lq.includes('toddler')||lq.includes('infant')||lq.includes('0-'))resource='toy-mcp://products/cat/Baby & Toddler';
@@ -998,16 +1008,14 @@ async function handleCommand(text){
 
     let results;
     if(type==='orders'){
-      results=mcpQuery(resource);
+      results=toyQuery(resource);
     } else {
-      results=mcpQuery(resource);
-      // Apply budget filter
+      results=toyQuery(resource);
       const budgetMatch=lq.match(/under\s*€?(\d+)/i)||lq.match(/€?(\d+)\s*euro/i)||lq.match(/budget\s*of\s*€?(\d+)/i);
       if(budgetMatch){
         const maxB=parseFloat(budgetMatch[1]);
         if(!isNaN(maxB))results=results.filter(p=>p.price<=maxB);
       }
-      // Apply age filter
       const ageM=lq.match(/(\d+)[- ]year[- ]old/i)||lq.match(/for a (\d+)/i);
       if(ageM&&results.length>1){
         const ageA=parseInt(ageM[1]);
@@ -1015,7 +1023,6 @@ async function handleCommand(text){
           const a=parseInt(p.age_range);return!isNaN(a)&&a<=ageA+2;
         });
       }
-      // Apply keyword search
       if(results===products||results.length===products.length){
         const kwMatch=lq.match(/show me\s+(.+)/i)||lq.match(/find\s+(.+)/i)||lq.match(/looking for\s+(.+)/i);
         if(kwMatch){
@@ -1025,30 +1032,30 @@ async function handleCommand(text){
       }
     }
 
-    await runMCPFlow(q,results,type);
+    await runEngineFlow(q,results,type);
 
     hideTyping();
     const reply=await askGroq(q,results,type);
 
     addMsg(reply,'bot');
 
-    // Show right panel
     if(type==='orders'){
       showRefOrders(results);
     } else {
       showRefProducts(results);
     }
 
-    clearMCP();
-    addMCPStep('fa-check-circle','Complete','Done','done');
-    addMCPStep('fa-star','Answer','Delivered','done');
+    clearEngine();
+    addEngineStep('fa-check-circle','Complete','Done','done');
+    addEngineStep('fa-star','Answer','Delivered','done');
 
     const rect=sendBtn.getBoundingClientRect();
     sparkleBurst(rect.left+rect.width/2,rect.top+rect.height/2);
+    burstConfetti();
 
     setTimeout(()=>{
-      clearMCP();
-      addMCPStep('fa-gift','Toy Store Server','Ready','discover');
+      clearEngine();
+      addEngineStep('fa-gift','Toy Engine','Ready','discover');
     },3000);
   } catch(e){
     console.error('handleCommand error:',e);
@@ -1084,7 +1091,7 @@ input.addEventListener('keydown',e=>{
   if(!isLiveData) updateSyncUI();
   startAutoRefresh();
   showRefProducts(products);
-  addMCPStep('fa-gift','Toy Store Server','Ready','discover');
+  addEngineStep('fa-gift','Toy Engine','Ready','discover');
   setTimeout(hideLoad,400);
 })();
 </script>
