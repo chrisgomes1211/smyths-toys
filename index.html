@@ -108,8 +108,9 @@ section{padding:80px 5%}
 .featured-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;max-width:1100px;margin:0 auto}
 .feat-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:all .35s;border:1px solid rgba(0,0,0,.04)}
 .feat-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(237,28,36,.12)}
-.feat-card-img{height:170px;display:flex;align-items:center;justify-content:center;font-size:3rem;color:#fff;position:relative;overflow:hidden}
-.feat-card-img .feat-img-icon{animation:floatToy 3s ease-in-out infinite;filter:drop-shadow(0 4px 12px rgba(0,0,0,.15));z-index:2}
+.feat-card-img{height:170px;position:relative;overflow:hidden;background:#f0f0f0}
+.feat-card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.feat-card:hover .feat-card-img img{transform:scale(1.08)}
 .feat-card-img .feat-overlay{position:absolute;inset:0;opacity:.15;background-image:radial-gradient(circle at 20% 50%,#fff 1px,transparent 1px);background-size:20px 20px;z-index:1}
 .feat-card-body{padding:16px 18px 18px}
 .feat-category{font-size:.6rem;text-transform:uppercase;letter-spacing:1.2px;color:#aaa;font-weight:700}
@@ -335,7 +336,7 @@ section{padding:80px 5%}
 <footer id="footer">
   <div class="footer-grid">
     <div class="footer-col">
-      <h4><svg viewBox="0 0 533.87 188.35" style="height:24px;width:auto;vertical-align:middle;margin-right:4px"><path d="m343.08,6h-.01c-.18-.02-.35-.03-.51-.04l-46.98-3.94c-1.56-.13-3.1-.26-4.62-.39h-.02c-11.13-.93-20.64-1.63-23.98-1.63s-12.85.71-23.98,1.63h-.02c-1.51.13-3.06.26-4.62.39l-46.98,3.94c-.17,0-.34.03-.51.04h0c-4.03.38-10.95,2.04-10.95,9.04.19,9.95,1.34,107.98,1.34,107.98,0,0,.07,9.07,7.43,10.24,7.35,1.17,61.35,14.31,69.38,15.67,5.04.85,6.52,1.57,8.91,1.4,2.4.17,3.88-.55,8.91-1.4,8.03-1.36,62.03-14.5,69.38-15.67s7.43-10.24,7.43-10.24c0,0,1.16-98.03,1.34-107.98,0-7-6.91-8.65-10.95-9.04h.02Z" fill="#FBEA07"/><path d="m274.1,146.13c-3.35.68-7.81,1.57-11.17.91l-80.16-16.44c1.76,2.24,3.41,3.02,5.68,3.77,3.3,1.09,70.72,15.14,70.72,15.14,1.69.37,3,.65,4.09.85,1.22.19,2.76.4,6.11.05.21-.02.27-.04.39-.06l.26-.06h0l6.62-1.43,41.27-9.23c12.71-2.96,23.98-5.56,27.08-6.06,2.55-.41,4.24-1.75,5.36-3.34l-76.25,15.9h0Z" fill="#ED1C24"/><path d="m353.55,12.06c-1.72-4.68-7.48-5.82-10.83-6.09l-33.53-2.77h0C291.67,1.66,272.34.03,266.97,0c-5.37.04-24.7,1.67-42.22,3.2h0l-33.53,2.77c-3.36.27-9.12,1.41-10.83,6.09l81,8.77c.11,0,.22.02.34.03h0s5.29.73,10.51,0h0c.11-.02.22-.02.33-.03l81-8.77h-.02Z" fill="#ED1C24"/></svg> Smyths Toys</h4>
+      <h4><svg viewBox="0 0 533.87 188.35" style="height:24px;width:auto;vertical-align:middle;margin-right:4px"><defs><linearGradient id="lf" x1="179.89" y1="112.24" x2="354.01" y2="112.24" gradientTransform="translate(0 187.42) scale(1 -1)"><stop offset=".33" stop-color="#fbea07"/><stop offset=".46" stop-color="#fbea07"/><stop offset=".58" stop-color="#fdcd0c"/></linearGradient><linearGradient id="lf2" x1="425.81" y1="86.47" x2="446.71" y2="76.92" gradientTransform="translate(.69 192.95) rotate(-.3) scale(1 -1)"><stop offset="0" stop-color="#fbea07"/><stop offset=".27" stop-color="#fbea07"/><stop offset=".89" stop-color="#fdcd0c"/></linearGradient><linearGradient id="lf3" x1="1751.46" y1="82.59" x2="1772.36" y2="73.04" gradientTransform="translate(1859.37 187.42) rotate(-180)"><stop offset=".19" stop-color="#fdcd0c"/><stop offset=".67" stop-color="#fbea07"/><stop offset="1" stop-color="#fbea07"/></linearGradient></defs><path d="m343.08,6h-.01c-.18-.02-.35-.03-.51-.04l-46.98-3.94c-1.56-.13-3.1-.26-4.62-.39h-.02c-11.13-.93-20.64-1.63-23.98-1.63s-12.85.71-23.98,1.63h-.02c-1.51.13-3.06.26-4.62.39l-46.98,3.94c-.17,0-.34.03-.51.04h0c-4.03.38-10.95,2.04-10.95,9.04.19,9.95,1.34,107.98,1.34,107.98,0,0,.07,9.07,7.43,10.24,7.35,1.17,61.35,14.31,69.38,15.67,5.04.85,6.52,1.57,8.91,1.4,2.4.17,3.88-.55,8.91-1.4,8.03-1.36,62.03-14.5,69.38-15.67s7.43-10.24,7.43-10.24c0,0,1.16-98.03,1.34-107.98,0-7-6.91-8.65-10.95-9.04h.02Z" fill="url(#lf)"/><path d="m274.1,146.13c-3.35.68-7.81,1.57-11.17.91l-80.16-16.44c1.76,2.24,3.41,3.02,5.68,3.77,3.3,1.09,70.72,15.14,70.72,15.14,1.69.37,3,.65,4.09.85,1.22.19,2.76.4,6.11.05.21-.02.27-.04.39-.06l.26-.06h0l6.62-1.43,41.27-9.23c12.71-2.96,23.98-5.56,27.08-6.06,2.55-.41,4.24-1.75,5.36-3.34l-76.25,15.9h0Z" fill="#ED1C24"/><path d="m353.55,12.06c-1.72-4.68-7.48-5.82-10.83-6.09l-33.53-2.77h0C291.67,1.66,272.34.03,266.97,0c-5.37.04-24.7,1.67-42.22,3.2h0l-33.53,2.77c-3.36.27-9.12,1.41-10.83,6.09l81,8.77c.11,0,.22.02.34.03h0s5.29.73,10.51,0h0c.11-.02.22-.02.33-.03l81-8.77h-.02Z" fill="#ED1C24"/></svg> Smyths Toys</h4>
       <p>Ireland's favourite toy store. Bringing joy to families since 1995.</p>
       <div class="footer-social">
         <a href="https://www.facebook.com/SmythsToysUK" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
@@ -568,6 +569,19 @@ const CAT_IMAGES={
   'Science & Learning':'fa-flask',
   'Soft Toys & Plush':'fa-paw'
 };
+
+
+const CAT_PHOTOS={
+  'LEGO & Building':'https://images.pexels.com/photos/821652/pexels-photo-821652.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'Action Figures & Dolls':'https://images.pexels.com/photos/3933269/pexels-photo-3933269.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'Board Games & Puzzles':'https://images.pexels.com/photos/4213768/pexels-photo-4213768.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'Arts & Crafts':'https://images.pexels.com/photos/4021766/pexels-photo-4021766.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'Outdoor & Sports':'https://images.pexels.com/photos/1674488/pexels-photo-1674488.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'Baby & Toddler':'https://images.pexels.com/photos/3933270/pexels-photo-3933270.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'Remote Control':'https://images.pexels.com/photos/1003357/pexels-photo-1003357.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'Science & Learning':'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'Soft Toys & Plush':'https://images.pexels.com/photos/3933258/pexels-photo-3933258.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop'
+};
 function buildFeatured(){
   const grid=document.getElementById('featGrid');
   const sorted=[...products].sort((a,b)=>b.rating-a.rating).slice(0,8);
@@ -575,10 +589,9 @@ function buildFeatured(){
     const card=document.createElement('div');card.className='feat-card reveal';card.style.animationDelay=(i*0.05)+'s';
     const stars=Math.round(p.rating||0);
     const cat=p.category||'General';
-    const gradient=CAT_GRADIENTS[cat]||'linear-gradient(135deg,#ED1C24,#c4161e)';
-    const icon=CAT_IMAGES[cat]||'fa-gift';
+
     card.innerHTML=`
-      <div class="feat-card-img" style="background:${gradient}"><div class="feat-overlay"></div><div class="feat-img-icon"><i class="fas ${icon}"></i></div></div>
+      <div class="feat-card-img"><img src="${CAT_PHOTOS[cat]||''}" alt="${p.name}" loading="lazy"><div class="feat-overlay"></div></div>
       <div class="feat-card-body">
         <div class="feat-category">${cat}</div>
         <div class="feat-name">${p.name}</div>
