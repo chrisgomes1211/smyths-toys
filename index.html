@@ -1019,26 +1019,26 @@ function generateLocal(query,results,type){
   if(!isNaN(maxPrice)&&maxPrice>0){
     const filtered=results.filter(p=>p.price<=maxPrice);
     if(filtered.length===0)return `I don't see any products under €${maxPrice} in that category. Would you like to try a higher budget?`;
-    return renderProductGrid(filtered,`Products under €${maxPrice}:`,`Prices range from €${fmtPrice(Math.min(...filtered.map(p=>p.price)))} to €${fmtPrice(maxPrice)}. Would you like more details on any?`);
+    return renderProductGrid(filtered,`Products under €${maxPrice}:`,`Prices from €${fmtPrice(Math.min(...filtered.map(p=>p.price)))} to €${fmtPrice(maxPrice)}.`);
   }
-  const ageMatch=lq.match(/(\d+)[- ]year[- ]old/i)||lq.match(/for a (\d+)/i);
+  const ageMatch=lq.match(/(\d+)\s*\+/i)||lq.match(/above\s+(\d+)/i)||lq.match(/over\s+(\d+)/i)||lq.match(/age\s+(\d+)/i)||lq.match(/(\d+)[- ]year[- ]old/i)||lq.match(/for a (\d+)/i);
   if(ageMatch){
     const age=parseInt(ageMatch[1]);const filtered=results.filter(p=>{const a=parseInt(p.age_range);return!isNaN(a)&&a<=age+2});
     if(filtered.length===0)return `I don't have specific recommendations for a ${age}-year-old in that category. Could you try a different age or product type?`;
-    return renderProductGrid([...filtered].sort((a,b)=>b.rating-a.rating),`Great picks for a ${age}-year-old:`,`Want more options or details on any of these?`);
+    return renderProductGrid([...filtered].sort((a,b)=>b.rating-a.rating),`Great picks for age ${age}:`,`Want more options? Tell me.`);
   }
   if(lq.includes('popular')||lq.includes('best')||lq.includes('top rated')||lq.includes('trending')){
-    return renderProductGrid([...results].sort((a,b)=>b.rating-a.rating),`Our most popular items:`,`Would you like to see more from a specific category?`);
+    return renderProductGrid([...results].sort((a,b)=>b.rating-a.rating),`Our most popular items:`,`Want to see more from one category?`);
   }
   if(lq.includes('gift')||lq.includes('birthday')||lq.includes('present')){
-    return renderProductGrid([...results].sort((a,b)=>b.rating-a.rating),`Great gift ideas:`,`Perfect for a birthday or special occasion! Would you like more details?`);
+    return renderProductGrid([...results].sort((a,b)=>b.rating-a.rating),`Great gift ideas:`,`For birthday or special day! Want details?`);
   }
   const cats=[...new Set(results.map(p=>p.category))];const prices=results.map(p=>p.price);const min=Math.min(...prices);const max=Math.max(...prices);
   let title=`I found ${results.length} product${results.length>1?'s':''}`;
   if(cats.length===1)title+=` in ${cats[0]}`;
   else if(cats.length>1)title+=` across ${cats.length} categories`;
   title+=`:`;
-  return renderProductGrid(results,title,`Prices range from €${fmtPrice(min)} to €${fmtPrice(max)}. Would you like to filter by age, price, or interest?`);
+  return renderProductGrid(results,title,`Prices €${fmtPrice(min)} to €${fmtPrice(max)}. Need help? Ask me!`);
 }
 
 // ============================================================
@@ -1054,11 +1054,11 @@ async function handleCommand(text){
   avatarTalk();
   try{
     const lq=q.toLowerCase();
-    if(lq.includes('cart')||lq.includes('basket')||lq.includes('checkout')||lq.includes('place order')||lq.includes('add to cart')||lq.includes('buy')||lq.includes('purchase')){
+    if(lq.includes('cart')||lq.includes('basket')||lq.includes('checkout')||lq.includes('place order')||lq.includes('add to cart')||lq.includes('buy')||lq.includes('purchase')||lq.match(/(?:^|\s)order\s+(?!my|the|an|this)/i)){
       showTyping();avatarTalk();
       try{
         let reply;
-        const addMatch=lq.match(/add\s+(.+?)(?:\s+to\s+(?:my\s+)?(?:cart|basket))?\s*$/)||lq.match(/buy\s+(.+)/);
+        const addMatch=lq.match(/add\s+(.+?)(?:\s+to\s+(?:my\s+)?(?:cart|basket))?\s*$/)||lq.match(/buy\s+(.+)/)||lq.match(/(?:^|\s)order\s+(.+)/i);
         if(addMatch){
           const search=addMatch[1].toLowerCase().trim();
           const found=products.filter(p=>p.name.toLowerCase().includes(search)||p.tags.toLowerCase().includes(search));
@@ -1080,22 +1080,22 @@ async function handleCommand(text){
     let type='products';
     let resource='toy-mcp://products';
     const hasEmail=lq.match(/[\w.+-]+@[\w-]+\.[\w.]+/i);
-    if(lq.includes('track')||lq.includes('order')||lq.includes('delivery')||lq.includes('shipped')||lq.includes('status')||lq.includes('st-2026')||hasEmail){
+    if(lq.includes('track')||lq.includes('delivery')||lq.includes('shipped')||lq.includes('status')||lq.includes('st-2026')||hasEmail||(lq.includes('order')&&(lq.includes('my')||lq.includes('track')))){
       type='orders';
       const oidMatch=lq.match(/ST-2026-\d+/i);
       if(oidMatch)resource=`toy-mcp://orders/id/${oidMatch[0].toUpperCase()}`;
       else if(hasEmail)resource=`toy-mcp://orders/email/${hasEmail[0]}`;
       else{const nameMatch=lq.match(/for\s+name\s+(.+)/i)||lq.match(/for\s+(.+)/i);if(nameMatch)resource=`toy-mcp://orders/customer/${nameMatch[1].trim()}`;else resource='toy-mcp://orders'}
     }
-    else if(lq.includes('lego')||lq.includes('brick'))resource='toy-mcp://products/cat/LEGO & Building';
-    else if(lq.includes('board game')||lq.includes('puzzle')||lq.includes('jenga')||lq.includes('monopoly')||lq.includes('chess'))resource='toy-mcp://products/cat/Board Games & Puzzles';
-    else if(lq.includes('baby')||lq.includes('toddler')||lq.includes('infant')||lq.includes('0-'))resource='toy-mcp://products/cat/Baby & Toddler';
+    else if(lq.includes('lego')||lq.includes('brick')||lq.includes('build'))resource='toy-mcp://products/cat/LEGO & Building';
+    else if(lq.includes('board game')||lq.includes('puzzle')||lq.includes('jenga')||lq.includes('monopoly')||lq.includes('chess')||lq.includes('game'))resource='toy-mcp://products/cat/Board Games & Puzzles';
+    else if(lq.includes('baby')||lq.includes('toddler')||lq.includes('todler')||lq.includes('infant')||lq.includes('0-'))resource='toy-mcp://products/cat/Baby & Toddler';
     else if(lq.includes('drone')||lq.includes('remote')||lq.includes('rc '))resource='toy-mcp://products/cat/Remote Control';
-    else if(lq.includes('science')||lq.includes('coding')||lq.includes('robot')||lq.includes('microscope')||lq.includes('telescope')||lq.includes('chemistry'))resource='toy-mcp://products/cat/Science & Learning';
-    else if(lq.includes('plush')||lq.includes('teddy')||lq.includes('squishmallow')||lq.includes('soft toy')||lq.includes('stuffed'))resource='toy-mcp://products/cat/Soft Toys & Plush';
-    else if(lq.includes('outdoor')||lq.includes('trampoline')||lq.includes('bike')||lq.includes('scooter')||lq.includes('sport'))resource='toy-mcp://products/cat/Outdoor & Sports';
-    else if(lq.includes('craft')||lq.includes('art')||lq.includes('paint')||lq.includes('draw')||lq.includes('playdoh')||lq.includes('origami'))resource='toy-mcp://products/cat/Arts & Crafts';
-    else if(lq.includes('action')||lq.includes('doll')||lq.includes('barbie')||lq.includes('pokemon')||lq.includes('paw patrol')||lq.includes('hot wheels')||lq.includes('marvel'))resource='toy-mcp://products/cat/Action Figures & Dolls';
+    else if(lq.includes('science')||lq.includes('coding')||lq.includes('robot')||lq.includes('microscope')||lq.includes('telescope')||lq.includes('chemistry')||lq.includes('stem')||lq.includes('learn'))resource='toy-mcp://products/cat/Science & Learning';
+    else if(lq.includes('plush')||lq.includes('teddy')||lq.includes('squishmallow')||lq.includes('squishy')||lq.includes('soft toy')||lq.includes('stuffed')||lq.includes('cuddly'))resource='toy-mcp://products/cat/Soft Toys & Plush';
+    else if(lq.includes('outdoor')||lq.includes('trampoline')||lq.includes('bike')||lq.includes('scooter')||lq.includes('sport')||lq.includes('outside')||lq.includes('garden'))resource='toy-mcp://products/cat/Outdoor & Sports';
+    else if(lq.includes('craft')||lq.includes('art')||lq.includes('paint')||lq.includes('draw')||lq.includes('playdoh')||lq.includes('origami')||lq.includes('color')||lq.includes('colour'))resource='toy-mcp://products/cat/Arts & Crafts';
+    else if(lq.includes('action')||lq.includes('doll')||lq.includes('barbie')||lq.includes('pokemon')||lq.includes('paw patrol')||lq.includes('hot wheels')||lq.includes('marvel')||lq.includes('superhero')||lq.includes('super hero')||lq.includes('dinosaur')||lq.includes('figure')||lq.includes('star war'))resource='toy-mcp://products/cat/Action Figures & Dolls';
     else if(lq.includes('popular')||lq.includes('best')||lq.includes('top')||lq.includes('trending'))resource='toy-mcp://popular';
     else if(lq.includes('cheap')||lq.includes('under')||lq.includes('€')||lq.includes('euro')||lq.includes('budget')||lq.includes('affordable')||lq.includes('price')||lq.includes('cost')||lq.includes('how much'))resource='toy-mcp://products';
     else if(lq.includes('stock')||lq.includes('available')||lq.includes('in stock'))resource='toy-mcp://products/stock';
@@ -1106,11 +1106,17 @@ async function handleCommand(text){
     if(type==='orders')results=toyQuery(resource);
     else{
       results=toyQuery(resource);
-      const budgetMatch=lq.match(/under\s*€?(\d+)/i)||lq.match(/€?(\d+)\s*euro/i)||lq.match(/budget\s*of\s*€?(\d+)/i);
+      const budgetMatch=lq.match(/under\s*€?(\d+)/i)||lq.match(/€?(\d+)\s*euro/i)||lq.match(/budget\s*of\s*€?(\d+)/i)||lq.match(/less than\s*€?(\d+)/i);
       if(budgetMatch){const maxB=parseFloat(budgetMatch[1]);if(!isNaN(maxB))results=results.filter(p=>p.price<=maxB)}
-      const ageM=lq.match(/(\d+)[- ]year[- ]old/i)||lq.match(/for a (\d+)/i);
+      const minPriceMatch=lq.match(/over\s*€?(\d+)/i)||lq.match(/above\s*€?(\d+)/i)||lq.match(/more than\s*€?(\d+)/i)||lq.match(/€?(\d+)\s*and\s*up/i);
+      if(minPriceMatch){const min=parseFloat(minPriceMatch[1]);if(!isNaN(min))results=results.filter(p=>p.price>=min)}
+      const rangeMatch=lq.match(/€?(\d+)\s*(?:to|-)\s*€?(\d+)/i);
+      if(rangeMatch){const lo=parseFloat(rangeMatch[1]),hi=parseFloat(rangeMatch[2]);if(!isNaN(lo)&&!isNaN(hi))results=results.filter(p=>p.price>=lo&&p.price<=hi)}
+      const ageM=lq.match(/(\d+)\s*\+/i)||lq.match(/above\s+(\d+)/i)||lq.match(/over\s+(\d+)/i)||lq.match(/age\s+(\d+)/i)||lq.match(/(\d+)[- ]year[- ]old/i)||lq.match(/for a (\d+)/i);
       if(ageM&&results.length>1){const ageA=parseInt(ageM[1]);results=results.filter(p=>{const a=parseInt(p.age_range);return!isNaN(a)&&a<=ageA+2})}
-      if(results===products||results.length===products.length){const kwMatch=lq.match(/show me\s+(.+)/i)||lq.match(/find\s+(.+)/i)||lq.match(/looking for\s+(.+)/i);if(kwMatch){const kw=kwMatch[1].toLowerCase();results=products.filter(p=>p.name.toLowerCase().includes(kw)||p.tags.toLowerCase().includes(kw)||p.category.toLowerCase().includes(kw))}}
+      if(results===products||results.length===products.length){const kwMatch=lq.match(/show me\s+(.+)/i)||lq.match(/find\s+(.+)/i)||lq.match(/looking for\s+(.+)/i)||lq.match(/i want\s+(.+)/i)||lq.match(/i need\s+(.+)/i)||lq.match(/give me\s+(.+)/i);if(kwMatch){const kw=kwMatch[1].toLowerCase();results=products.filter(p=>p.name.toLowerCase().includes(kw)||p.tags.toLowerCase().includes(kw)||p.category.toLowerCase().includes(kw))}}
+      if(lq.includes('cheapest')||lq.includes('lowest price')||lq.includes('price low')||lq.includes('most cheap')||lq.includes('least expensive'))results=[...results].sort((a,b)=>parseFloat(a.price)-parseFloat(b.price));
+      else if(lq.includes('highest price')||lq.includes('most expensive')||lq.includes('price high')||lq.includes('expensive'))results=[...results].sort((a,b)=>parseFloat(b.price)-parseFloat(a.price));
     }
     await runEngineFlow(q,results,type);
     hideTyping();
