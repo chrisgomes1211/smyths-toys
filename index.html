@@ -219,10 +219,6 @@ section{padding:80px 5%}
 #chatOverlay .mcp-arrow{color:#ccc;font-size:.5rem;padding:0 1px}
 @keyframes stepPop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
 #chatOverlay #mcpEmpty{text-align:center;color:#ccc;font-size:.6rem;padding:3px 0;font-weight:500}
-#chatOverlay #syncBtn{background:0;border:0;color:#ccc;cursor:pointer;font-size:.55rem;padding:2px 6px;border-radius:4px;margin-left:auto;transition:color .2s,transform .2s}
-#chatOverlay #syncBtn:hover{color:#ED1C24;background:rgba(237,28,36,.08)}
-#chatOverlay #syncBtn.syncing{color:#ED1C24;animation:syncSpin .6s linear infinite;pointer-events:none}
-@keyframes syncSpin{to{transform:rotate(360deg)}}
 
 @media(max-width:480px){
   #chatOverlay{right:10px;left:10px;width:auto;bottom:80px;height:calc(100vh - 100px);max-height:none}
@@ -433,7 +429,7 @@ section{padding:80px 5%}
     <button id="send"><i class="fas fa-paper-plane"></i></button>
   </div>
   <div id="mcpPanel">
-    <h4><i class="fas fa-cogs"></i> Toy Engine <button id="syncBtn" title="Refresh data from Google Sheet"><i class="fas fa-sync-alt"></i></button></h4>
+    <h4><i class="fas fa-cogs"></i> Toy Engine</h4>
     <div id="mcpFlow"><div id="mcpEmpty">Ask me about toys, orders, or gifts...</div></div>
   </div>
 </div>
@@ -926,17 +922,13 @@ function renderProductGrid(results,title,footer){
   r+=`</div>${footer?`<div style="margin-top:8px;font-size:.75rem;color:#888">${footer}</div>`:''}`;
   return r;
 }
-async function syncData(){
-  const btn=document.getElementById('syncBtn');
-  if(btn.classList.contains('syncing'))return;
-  btn.classList.add('syncing');
+const SYNC_INTERVAL=30000;
+async function maybeSync(){
+  if(!isLiveData)return;
+  const now=Date.now();
+  if(lastSyncTime&&now-lastSyncTime<SYNC_INTERVAL)return;
   const loaded=await loadPublishedSheet();
-  if(loaded){
-    isLiveData=true;
-    buildCategories();buildFeatured();
-    showToast('Data refreshed from Google Sheet');
-  }else showToast('Failed to refresh data');
-  btn.classList.remove('syncing');
+  if(loaded){lastSyncTime=now;buildCategories();buildFeatured()}
 }
 let cart=[];
 function cartTotal(){return cart.reduce((s,c)=>s+c.price*c.qty,0)}
@@ -1058,6 +1050,7 @@ async function handleCommand(text){
   const q=text.trim();
   addMsg(q,'user');
   showTyping();
+  await maybeSync();
   avatarTalk();
   try{
     const lq=q.toLowerCase();
@@ -1147,6 +1140,8 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventD
   buildPills();
   const loaded = await loadPublishedSheet();
   if (!loaded) loadEmbeddedData();
+  isLiveData = !!loaded;
+  lastSyncTime = Date.now();
   const source = loaded ? 'Live Google Sheet' : 'Embedded Data';
   document.getElementById('mcpEmpty').textContent = `${source} — ${products.length} products, ${orders.length} orders loaded`;
   buildCategories();
@@ -1157,7 +1152,6 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventD
   initParallax();
   initHeroCanvas();
   initNavbar();
-  document.getElementById('syncBtn').addEventListener('click',async(e)=>{e.preventDefault();await syncData()});
   addEngineStep('fa-gift','Toy Engine','Ready','discover');
   setTimeout(()=>{
     hideLoad();
