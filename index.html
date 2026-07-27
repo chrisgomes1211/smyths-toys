@@ -219,6 +219,10 @@ section{padding:80px 5%}
 #chatOverlay .mcp-arrow{color:#ccc;font-size:.5rem;padding:0 1px}
 @keyframes stepPop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
 #chatOverlay #mcpEmpty{text-align:center;color:#ccc;font-size:.6rem;padding:3px 0;font-weight:500}
+#chatOverlay #syncBtn{background:0;border:0;color:#ccc;cursor:pointer;font-size:.55rem;padding:2px 6px;border-radius:4px;margin-left:auto;transition:color .2s,transform .2s}
+#chatOverlay #syncBtn:hover{color:#ED1C24;background:rgba(237,28,36,.08)}
+#chatOverlay #syncBtn.syncing{color:#ED1C24;animation:syncSpin .6s linear infinite;pointer-events:none}
+@keyframes syncSpin{to{transform:rotate(360deg)}}
 
 @media(max-width:480px){
   #chatOverlay{right:10px;left:10px;width:auto;bottom:80px;height:calc(100vh - 100px);max-height:none}
@@ -429,7 +433,7 @@ section{padding:80px 5%}
     <button id="send"><i class="fas fa-paper-plane"></i></button>
   </div>
   <div id="mcpPanel">
-    <h4><i class="fas fa-cogs"></i> Toy Engine</h4>
+    <h4><i class="fas fa-cogs"></i> Toy Engine <button id="syncBtn" title="Refresh data from Google Sheet"><i class="fas fa-sync-alt"></i></button></h4>
     <div id="mcpFlow"><div id="mcpEmpty">Ask me about toys, orders, or gifts...</div></div>
   </div>
 </div>
@@ -912,6 +916,28 @@ function askAbout(query){
     sendBtn.click();
   },400);
 }
+function renderProductCard(p){
+  const s=p.stock>0?`<span style="color:#16a34a;font-size:.58rem">✅ ${p.stock} in stock</span>`:'<span style="color:#dc2626;font-size:.58rem">❌ Out of stock</span>';
+  return `<div class="order-card"><div class="order-header"><div><div class="order-id" style="font-size:.75rem">${p.name}</div><div class="order-customer"><i class="fas fa-tag"></i> ${p.category||'General'}</div></div><span class="order-status" style="background:#ED1C24;color:#fff;font-size:.7rem">€${fmtPrice(p.price)}</span></div><div class="order-items"><div class="order-info-row"><i class="fas fa-child"></i> Ages ${p.age_range||'3+'}</div><div class="order-info-row">${s}</div>${p.rating>=4.5?`<div class="order-info-row">⭐ ${p.rating}/5</div>`:''}</div></div>`;
+}
+function renderProductGrid(results,title,footer){
+  let r=`<div style="margin-bottom:6px;font-weight:700">${title}</div><div style="display:flex;flex-direction:column;gap:6px">`;
+  results.slice(0,8).forEach(p=>{r+=renderProductCard(p)});
+  r+=`</div>${footer?`<div style="margin-top:8px;font-size:.75rem;color:#888">${footer}</div>`:''}`;
+  return r;
+}
+async function syncData(){
+  const btn=document.getElementById('syncBtn');
+  if(btn.classList.contains('syncing'))return;
+  btn.classList.add('syncing');
+  const loaded=await loadPublishedSheet();
+  if(loaded){
+    isLiveData=true;
+    buildCategories();buildFeatured();
+    showToast('Data refreshed from Google Sheet');
+  }else showToast('Failed to refresh data');
+  btn.classList.remove('syncing');
+}
 let cart=[];
 function cartTotal(){return cart.reduce((s,c)=>s+c.price*c.qty,0)}
 function renderCart(){
@@ -1001,43 +1027,26 @@ function generateLocal(query,results,type){
   if(!isNaN(maxPrice)&&maxPrice>0){
     const filtered=results.filter(p=>p.price<=maxPrice);
     if(filtered.length===0)return `I don't see any products under €${maxPrice} in that category. Would you like to try a higher budget?`;
-    let r=`Here's what we have under €${maxPrice}:\n\n`;
-    filtered.slice(0,8).forEach(p=>{r+=`• **${p.name}** — €${fmtPrice(p.price)} (Ages ${p.age_range||'3+'})${p.stock>0?` — ${p.stock} in stock`:' — Out of stock'}\n`});
-    r+=`\nWould you like more details on any of these?`;
-    return r;
+    return renderProductGrid(filtered,`Products under €${maxPrice}:`,`Prices range from €${fmtPrice(Math.min(...filtered.map(p=>p.price)))} to €${fmtPrice(maxPrice)}. Would you like more details on any?`);
   }
   const ageMatch=lq.match(/(\d+)[- ]year[- ]old/i)||lq.match(/for a (\d+)/i);
   if(ageMatch){
     const age=parseInt(ageMatch[1]);const filtered=results.filter(p=>{const a=parseInt(p.age_range);return!isNaN(a)&&a<=age+2});
     if(filtered.length===0)return `I don't have specific recommendations for a ${age}-year-old in that category. Could you try a different age or product type?`;
-    let r=`Here are some great picks for a ${age}-year-old:\n\n`;
-    filtered.sort((a,b)=>b.rating-a.rating).slice(0,8).forEach(p=>{r+=`• **${p.name}** — €${fmtPrice(p.price)} (Ages ${p.age_range||'3+'}) ⭐${p.rating}\n`});
-    r+=`\nWould you like more options or details on any of these?`;
-    return r;
+    return renderProductGrid([...filtered].sort((a,b)=>b.rating-a.rating),`Great picks for a ${age}-year-old:`,`Want more options or details on any of these?`);
   }
   if(lq.includes('popular')||lq.includes('best')||lq.includes('top rated')||lq.includes('trending')){
-    const sorted=[...results].sort((a,b)=>b.rating-a.rating);
-    let r=`Here are our most popular items:\n\n`;
-    sorted.slice(0,10).forEach((p,i)=>{r+=`${i+1}. **${p.name}** — €${fmtPrice(p.price)} ⭐${p.rating}${p.stock>0?` (${p.stock} left)`:' (Out of stock)'}\n`});
-    r+=`\nWould you like me to show more from a specific category?`;
-    return r;
+    return renderProductGrid([...results].sort((a,b)=>b.rating-a.rating),`Our most popular items:`,`Would you like to see more from a specific category?`);
   }
   if(lq.includes('gift')||lq.includes('birthday')||lq.includes('present')){
-    const sorted=[...results].sort((a,b)=>b.rating-a.rating);
-    let r=`Here are some great gift ideas:\n\n`;
-    sorted.slice(0,8).forEach(p=>{r+=`• **${p.name}** — €${fmtPrice(p.price)} (Ages ${p.age_range||'3+'}) ⭐${p.rating}\n`});
-    r+=`\nPerfect for a birthday or special occasion! Would you like more details on any of these?`;
-    return r;
+    return renderProductGrid([...results].sort((a,b)=>b.rating-a.rating),`Great gift ideas:`,`Perfect for a birthday or special occasion! Would you like more details?`);
   }
   const cats=[...new Set(results.map(p=>p.category))];const prices=results.map(p=>p.price);const min=Math.min(...prices);const max=Math.max(...prices);
-  let r=`I found **${results.length} product${results.length>1?'s':''}`;
-  if(cats.length===1)r+=` in **${cats[0]}**`;
-  else if(cats.length>1)r+=` across ${cats.length} categories`;
-  r+=`.\n\n`;
-  results.slice(0,8).forEach(p=>{r+=`• **${p.name}** — €${fmtPrice(p.price)} (Ages ${p.age_range||'3+'})${p.stock>0?` — ${p.stock} in stock`:' — Out of stock'}${p.rating>=4.5?` ⭐${p.rating}`:''}\n`});
-  r+=`\nPrices range from **€${fmtPrice(min)}** to **€${fmtPrice(max)}**.`;
-  r+=`\n\nWould you like me to filter by age, price, or interest?`;
-  return r;
+  let title=`I found ${results.length} product${results.length>1?'s':''}`;
+  if(cats.length===1)title+=` in ${cats[0]}`;
+  else if(cats.length>1)title+=` across ${cats.length} categories`;
+  title+=`:`;
+  return renderProductGrid(results,title,`Prices range from €${fmtPrice(min)} to €${fmtPrice(max)}. Would you like to filter by age, price, or interest?`);
 }
 
 // ============================================================
@@ -1148,6 +1157,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventD
   initParallax();
   initHeroCanvas();
   initNavbar();
+  document.getElementById('syncBtn').addEventListener('click',async(e)=>{e.preventDefault();await syncData()});
   addEngineStep('fa-gift','Toy Engine','Ready','discover');
   setTimeout(()=>{
     hideLoad();
