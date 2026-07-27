@@ -14,12 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Inject OpenAI API key
-        if: ${{ secrets.OPENAI_API_KEY != '' }}
-        run: sed -i "s|__OPENAI_API_KEY__|${{ secrets.OPENAI_API_KEY }}|g" index.html
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
