@@ -912,6 +912,29 @@ function askAbout(query){
     sendBtn.click();
   },400);
 }
+let cart=[];
+function cartTotal(){return cart.reduce((s,c)=>s+c.price*c.qty,0)}
+function renderCart(){
+  if(cart.length===0)return "Your cart is empty. Browse our products like <strong>Show me Lego</strong> or <strong>Board games</strong> to find toys!";
+  let r=`<div class="order-card"><div class="order-header"><div><div class="order-id">🛒 Your Cart</div></div><span style="background:#ED1C24;color:#fff;border-radius:20px;padding:2px 10px;font-size:.7rem">${cart.reduce((s,c)=>s+c.qty,0)} item${cart.reduce((s,c)=>s+c.qty,0)!==1?'s':''}</span></div><div class="order-items">`;
+  cart.forEach(c=>{r+=`<div class="order-item"><span class="qty">${c.qty}</span><span class="item-name">${c.name}</span><span class="item-price">€${fmtPrice(c.price*c.qty)}</span></div>`});
+  r+=`</div><div class="order-total"><span class="total-label">Total</span><span class="total-value">€${fmtPrice(cartTotal())}</span></div></div><div style="margin-top:8px;font-size:.75rem;color:#888">Say <strong>checkout</strong> to place your order.</div>`;
+  return r;
+}
+function processCheckout(){
+  if(cart.length===0)return "Your cart is empty. Add some toys first!";
+  const oid=`ST-2026-${String(Object.keys(ordMap).length+1).padStart(4,'0')}`;
+  const today=new Date().toLocaleDateString('en-GB');
+  const items=cart.map(c=>({order_id:oid,customer_name:'You',email:'',sku:c.sku,item_name:c.name,category:c.category,qty:c.qty,unit_price:c.price,total:c.price*c.qty,order_date:today,status:'Processing',payment_method:'',shipping_address:'',tracking_number:''}));
+  const total=cartTotal();
+  items.forEach(it=>{orders.push(it);if(!ordMap[it.order_id])ordMap[it.order_id]=[];ordMap[it.order_id].push(it)});
+  try{localStorage.setItem('smyths_cart_orders',JSON.stringify(orders))}catch(e){}
+  cart=[];
+  let r=`<div style="margin-bottom:8px">🎉 <strong>Order Placed!</strong></div><div class="order-card"><div class="order-header"><div><div class="order-id">${oid}</div></div><span class="order-status processing">Processing</span></div><div class="order-items">`;
+  items.forEach(it=>{r+=`<div class="order-item"><span class="qty">${it.qty}</span><span class="item-name">${it.item_name}</span><span class="item-price">€${fmtPrice(it.unit_price)}</span></div>`});
+  r+=`</div><div class="order-total"><span class="total-label">Order Total</span><span class="total-value">€${fmtPrice(total)}</span></div><div class="order-info-row"><i class="fas fa-calendar"></i> ${today}</div><div class="order-msg processing">Your order is being processed. Track it anytime by saying "${oid}".</div></div>`;
+  return r;
+}
 
 // ============================================================
 //  OPENAI LLM
@@ -1029,6 +1052,29 @@ async function handleCommand(text){
   avatarTalk();
   try{
     const lq=q.toLowerCase();
+    if(lq.includes('cart')||lq.includes('basket')||lq.includes('checkout')||lq.includes('place order')||lq.includes('add to cart')||lq.includes('buy')||lq.includes('purchase')){
+      showTyping();avatarTalk();
+      try{
+        let reply;
+        const addMatch=lq.match(/add\s+(.+?)(?:\s+to\s+(?:my\s+)?(?:cart|basket))?\s*$/)||lq.match(/buy\s+(.+)/);
+        if(addMatch){
+          const search=addMatch[1].toLowerCase().trim();
+          const found=products.filter(p=>p.name.toLowerCase().includes(search)||p.tags.toLowerCase().includes(search));
+          if(found.length===0)reply=`I couldn't find "${addMatch[1]}" in our catalogue.`;
+          else if(found.length>1)reply=`I found a few: ${found.slice(0,5).map(p=>`<strong>${p.name}</strong> (€${fmtPrice(p.price)})`).join(', ')}. Which one? Try "add ${found[0].name} to cart".`;
+          else{
+            const item=found[0];const existing=cart.find(c=>c.sku===item.sku);
+            if(existing)existing.qty++;else cart.push({...item,qty:1});
+            reply=`<div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0"><span style="font-size:1.5rem">✅</span><div><strong>${item.name}</strong> added to cart!<br><span style="font-size:.75rem;color:#888">Cart: €${fmtPrice(cartTotal())} · ${cart.reduce((s,c)=>s+c.qty,0)} item${cart.reduce((s,c)=>s+c.qty,0)!==1?'s':''}</span></div></div><div style="margin-top:8px;font-size:.75rem;color:#888">Say "show cart" or "checkout".</div>`;
+          }
+        }
+        else if(lq.includes('checkout')||lq.includes('place order'))reply=processCheckout();
+        else reply=renderCart();
+        hideTyping();addMsg(reply,'bot');
+      }catch(e){console.error('Cart error:',e);hideTyping();addMsg("Sorry, something went wrong.",'bot')}
+      finally{isSending=false;sendBtn.disabled=false}
+      return;
+    }
     let type='products';
     let resource='toy-mcp://products';
     const hasEmail=lq.match(/[\w.+-]+@[\w-]+\.[\w.]+/i);
