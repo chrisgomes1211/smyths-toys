@@ -951,6 +951,9 @@ function generateLocal(query,results,type){
     const grouped={};
     results.forEach(o=>{if(!grouped[o.order_id])grouped[o.order_id]=[];grouped[o.order_id].push(o)});
     const entries=Object.entries(grouped);
+    if(entries.length===orders.length&&!lq.match(/[\w.+-]+@[\w-]+\.[\w.]+/i)&&!lq.match(/ST-2026-\d+/i)&&!lq.match(/for\s+(.+)/i)){
+      return "I'd be happy to help! To track your order, I need one of the following:\n\n• <strong>Order ID</strong> (like ST-2026-XXXX)\n• <strong>Email address</strong> you used when ordering\n• <strong>Full name</strong>\n\nWhich do you have?";
+    }
     if(entries.length===1){
       const [oid,items]=entries[0];const first=items[0];const total=items.reduce((s,it)=>s+parseFloat(it.total),0);
       const statusClass=first.status.toLowerCase();
@@ -1032,7 +1035,11 @@ async function handleCommand(text){
       type='orders';
       const oidMatch=lq.match(/ST-2026-\d+/i);
       if(oidMatch)resource=`toy-mcp://orders/id/${oidMatch[0]}`;
-      else{const nameMatch=lq.match(/for\s+(.+)/i);if(nameMatch)resource=`toy-mcp://orders/customer/${nameMatch[1].trim()}`;else resource='toy-mcp://orders'}
+      else{
+        const emailMatch=lq.match(/[\w.+-]+@[\w-]+\.[\w.]+/i);
+        if(emailMatch)resource=`toy-mcp://orders/email/${emailMatch[0]}`;
+        else{const nameMatch=lq.match(/for\s+(.+)/i);if(nameMatch)resource=`toy-mcp://orders/customer/${nameMatch[1].trim()}`;else resource='toy-mcp://orders'}
+      }
     }
     else if(lq.includes('lego')||lq.includes('brick'))resource='toy-mcp://products/cat/LEGO & Building';
     else if(lq.includes('board game')||lq.includes('puzzle')||lq.includes('jenga')||lq.includes('monopoly')||lq.includes('chess'))resource='toy-mcp://products/cat/Board Games & Puzzles';
