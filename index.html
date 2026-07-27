@@ -1032,12 +1032,12 @@ async function handleCommand(text){
     let type='products';
     let resource='toy-mcp://products';
     const hasEmail=lq.match(/[\w.+-]+@[\w-]+\.[\w.]+/i);
-    if(lq.includes('track')||lq.includes('order')||lq.includes('delivery')||lq.includes('shipped')||lq.includes('status')||lq.includes('ST-2026')||hasEmail){
+    if(lq.includes('track')||lq.includes('order')||lq.includes('delivery')||lq.includes('shipped')||lq.includes('status')||lq.includes('st-2026')||hasEmail){
       type='orders';
       const oidMatch=lq.match(/ST-2026-\d+/i);
-      if(oidMatch)resource=`toy-mcp://orders/id/${oidMatch[0]}`;
+      if(oidMatch)resource=`toy-mcp://orders/id/${oidMatch[0].toUpperCase()}`;
       else if(hasEmail)resource=`toy-mcp://orders/email/${hasEmail[0]}`;
-      else{const nameMatch=lq.match(/for\s+(.+)/i);if(nameMatch)resource=`toy-mcp://orders/customer/${nameMatch[1].trim()}`;else resource='toy-mcp://orders'}
+      else{const nameMatch=lq.match(/for\s+name\s+(.+)/i)||lq.match(/for\s+(.+)/i);if(nameMatch)resource=`toy-mcp://orders/customer/${nameMatch[1].trim()}`;else resource='toy-mcp://orders'}
     }
     else if(lq.includes('lego')||lq.includes('brick'))resource='toy-mcp://products/cat/LEGO & Building';
     else if(lq.includes('board game')||lq.includes('puzzle')||lq.includes('jenga')||lq.includes('monopoly')||lq.includes('chess'))resource='toy-mcp://products/cat/Board Games & Puzzles';
