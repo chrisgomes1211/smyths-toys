@@ -17,9 +17,17 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Inject Groq API key
+      - name: Inject OpenAI API key (optional)
         run: |
-          sed -i "s/__GROQ_API_KEY__/${{ secrets.GROQ_API_KEY }}/g" index.html
+          if [ -n "${{ secrets.OPENAI_API_KEY }}" ]; then
+            python3 -c "
+with open('index.html') as f:
+    c = f.read()
+c = c.replace('__OPENAI_API_KEY__', '${{ secrets.OPENAI_API_KEY }}')
+with open('index.html', 'w') as f:
+    f.write(c)
+            "
+          fi
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:

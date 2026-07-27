@@ -224,6 +224,33 @@ section{padding:80px 5%}
   #chatOverlay{right:10px;left:10px;width:auto;bottom:80px;height:calc(100vh - 100px);max-height:none}
 }
 
+/* ── Order Card ── */
+#chatOverlay .order-card{background:#fff;border-radius:12px;padding:12px;margin:4px 0;border:1px solid rgba(237,28,36,.1);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+#chatOverlay .order-card .order-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid #F5F3F0}
+#chatOverlay .order-card .order-id{font-family:'Nunito',sans-serif;font-weight:800;font-size:.82rem;color:#231F20}
+#chatOverlay .order-card .order-customer{font-size:.68rem;color:#888;margin-top:1px}
+#chatOverlay .order-card .order-status{padding:3px 10px;border-radius:12px;font-size:.62rem;font-weight:700;white-space:nowrap}
+#chatOverlay .order-card .order-status.delivered{background:#e8f5e9;color:#2e7d32}
+#chatOverlay .order-card .order-status.shipped{background:#e3f2fd;color:#1565c0}
+#chatOverlay .order-card .order-status.processing{background:#fff3e0;color:#e65100}
+#chatOverlay .order-card .order-status.cancelled{background:#fce4ec;color:#c62828}
+#chatOverlay .order-card .order-status.returned{background:#f3e5f5;color:#6a1b9a}
+#chatOverlay .order-card .order-item{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:.72rem;color:#444;border-bottom:1px solid #f5f5f5}
+#chatOverlay .order-card .order-item:last-child{border-bottom:none}
+#chatOverlay .order-card .order-item .qty{background:#ED1C24;color:#fff;border-radius:6px;padding:1px 7px;font-size:.6rem;font-weight:700;min-width:18px;text-align:center}
+#chatOverlay .order-card .order-item .item-name{flex:1}
+#chatOverlay .order-card .order-item .item-price{color:#ED1C24;font-weight:700}
+#chatOverlay .order-card .order-total{display:flex;justify-content:space-between;align-items:center;padding:6px 0 4px;font-size:.75rem;font-weight:800;color:#231F20;border-top:1px solid #F5F3F0;margin-top:4px}
+#chatOverlay .order-card .order-total .total-label{font-weight:600;color:#888;font-size:.65rem}
+#chatOverlay .order-card .order-total .total-value{font-size:.88rem;color:#ED1C24;font-family:'Nunito',sans-serif}
+#chatOverlay .order-card .order-info-row{display:flex;align-items:center;gap:6px;padding:2px 0;font-size:.65rem;color:#666}
+#chatOverlay .order-card .order-info-row i{width:14px;color:#ED1C24;font-size:.6rem}
+#chatOverlay .order-card .order-msg{padding:6px 10px;border-radius:8px;font-size:.68rem;margin-top:6px;font-weight:600}
+#chatOverlay .order-card .order-msg.delivered{background:#e8f5e9;color:#2e7d32}
+#chatOverlay .order-card .order-msg.shipped{background:#e3f2fd;color:#1565c0}
+#chatOverlay .order-card .order-msg.processing{background:#fff3e0;color:#e65100}
+#chatOverlay .order-card .order-msg.cancelled{background:#fce4ec;color:#c62828}
+#chatOverlay .order-card .order-msg.returned{background:#f3e5f5;color:#6a1b9a}
 /* ── Chat FAB ── */
 #chatFab{position:fixed;bottom:24px;right:24px;z-index:9998;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#ED1C24,#c4161e);color:#FBEA07;border:none;font-size:1.3rem;box-shadow:0 6px 24px rgba(237,28,36,.35);transition:all .3s;display:flex;align-items:center;justify-content:center}
 #chatFab:hover{transform:scale(1.1) rotate(-5deg);box-shadow:0 8px 30px rgba(237,28,36,.45)}
@@ -425,8 +452,10 @@ const PRODUCTS_DATA = {"products":[{"sku":"LE-001","name":"LEGO City Fire Statio
 // ============================================================
 const SHEET_ID = '';
 const CSV_URL = SHEET_ID ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv` : null;
-const GROQ_KEY = '__GROQ_API_KEY__';
-const GROQ_MODEL = 'llama3-70b-8192';
+const PUBLISHED_SHEET_ID = '2PACX-1vRL2XpqeXOIRTrgu1DXhkTCrsskLwFsPL6ZXiAeDLhgZFDabpJ8KpS_Z9FLbaobno2brrHo3jdR9FPe';
+const PUBLISHED_GIDS = { products: '1310348786', orders: '1992400929', training: '1613343918' };
+const OPENAI_KEY = '__OPENAI_API_KEY__';
+const OPENAI_MODEL = 'gpt-4o-mini';
 
 const CATEGORIES = ['LEGO & Building','Action Figures & Dolls','Board Games & Puzzles','Arts & Crafts','Outdoor & Sports','Baby & Toddler','Remote Control','Science & Learning','Soft Toys & Plush'];
 
@@ -500,6 +529,46 @@ function loadEmbeddedData(){
   orders = PRODUCTS_DATA.orders || [];
   trainingData = PRODUCTS_DATA.training || [];
   buildMaps();
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim());
+  return lines.slice(1).map(line => {
+    const vals = [];
+    let current = '', inQuotes = false;
+    for (const ch of line) {
+      if (ch === '"') { inQuotes = !inQuotes; continue; }
+      if (ch === ',' && !inQuotes) { vals.push(current.trim()); current = ''; continue; }
+      current += ch;
+    }
+    vals.push(current.trim());
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = vals[i] || ''; });
+    return obj;
+  });
+}
+
+async function loadPublishedSheet() {
+  try {
+    const base = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_SHEET_ID}/pub`;
+    const [prodRes, ordRes, trainRes] = await Promise.all([
+      fetch(`${base}?gid=${PUBLISHED_GIDS.products}&single=true&output=csv`),
+      fetch(`${base}?gid=${PUBLISHED_GIDS.orders}&single=true&output=csv`),
+      fetch(`${base}?gid=${PUBLISHED_GIDS.training}&single=true&output=csv`)
+    ]);
+    const [prodCsv, ordCsv, trainCsv] = await Promise.all([
+      prodRes.text(), ordRes.text(), trainRes.text()
+    ]);
+    products = parseCSV(prodCsv);
+    orders = parseCSV(ordCsv);
+    trainingData = parseCSV(trainCsv);
+    buildMaps();
+    return true;
+  } catch (e) {
+    console.warn('Sheet fetch failed, using embedded data:', e);
+    return false;
+  }
 }
 
 function buildMaps(){
@@ -845,9 +914,9 @@ function askAbout(query){
 }
 
 // ============================================================
-//  GROQ LLM
+//  OPENAI LLM
 // ============================================================
-async function askGroq(query,results,type){
+async function askOpenAI(query,results,type){
   if(type==='orders'){if(!results||results.length===0)return generateLocal(query,results,type);return generateLocal(query,results,type)}
   if(!results||results.length===0)return generateLocal(query,results,type);
   const context=results.slice(0,20);
@@ -856,17 +925,17 @@ async function askGroq(query,results,type){
   try{
     const ctrl=new AbortController();
     const tmr=setTimeout(()=>ctrl.abort(),8000);
-    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${GROQ_KEY}`},
-      body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'system',content:system},{role:'user',content:query}],temperature:0.7,max_tokens:600}),
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${OPENAI_KEY}`},
+      body:JSON.stringify({model:OPENAI_MODEL,messages:[{role:'system',content:system},{role:'user',content:query}],temperature:0.7,max_tokens:600}),
       signal:ctrl.signal
     });
     clearTimeout(tmr);
-    if(!r.ok){const e=await r.text();console.error('Groq error:',e);return generateLocal(query,results,type)}
+    if(!r.ok){const e=await r.text();console.error('OpenAI error:',e);return generateLocal(query,results,type)}
     const j=await r.json();
     return j.choices[0].message.content;
-  }catch(e){console.error('Groq fetch failed:',e);return generateLocal(query,results,type)}
+  }catch(e){console.error('OpenAI fetch failed:',e);return generateLocal(query,results,type)}
 }
 
 // ============================================================
@@ -876,33 +945,29 @@ function generateLocal(query,results,type){
   const lq=query.toLowerCase();
   if(type==='orders'||lq.includes('order')||lq.includes('track')||lq.includes('delivery')||lq.includes('shipped')){
     if(!results||results.length===0){
-      if(lq.includes('track')||lq.includes('where'))return "I'd be happy to track your order! I just need your **Order ID** (looks like ST-2026-XXXX) or the **email address** you used. Which do you have?";
+      if(lq.includes('track')||lq.includes('where'))return "I'd be happy to track your order! I just need your <strong>Order ID</strong> (looks like ST-2026-XXXX) or the <strong>email address</strong> you used. Which do you have?";
       return "I couldn't find any orders matching that. Could you provide your Order ID (like ST-2026-XXXX) or your full name?";
     }
     const grouped={};
     results.forEach(o=>{if(!grouped[o.order_id])grouped[o.order_id]=[];grouped[o.order_id].push(o)});
     const entries=Object.entries(grouped);
     if(entries.length===1){
-      const [oid,items]=entries[0];const first=items[0];const total=items.reduce((s,it)=>s+it.total,0);
-      const statusIcon={'Delivered':'✅','Shipped':'🚚','Processing':'⏳','Cancelled':'❌','Returned':'🔄'};
-      let r=`I found order **${oid}** for **${first.customer_name}**:\n\n**Status:** ${statusIcon[first.status]||'📦'} ${first.status}`;
-      r+=`\n**Items:** ${items.map(it=>`${it.item_name||'Item'} x${it.qty}`).join(', ')}`;
-      r+=`\n**Total:** €${fmtPrice(total)}`;
-      r+=`\n**Date:** ${first.order_date}`;
-      if(first.tracking_number)r+=`\n**Tracking:** ${first.tracking_number}`;
-      if(first.shipping_address)r+=`\n**Shipping to:** ${first.shipping_address}`;
-      if(first.payment_method)r+=`\n**Payment:** ${first.payment_method}`;
-      if(first.status==='Processing')r+=`\n\nYour order is being processed and will be shipped within 1-2 business days.`;
-      if(first.status==='Shipped')r+=`\n\nYour order is on its way! It should arrive within 2-5 business days.`;
-      if(first.status==='Delivered')r+=`\n\nYour order has been delivered. Enjoy your toys!`;
-      if(first.status==='Cancelled')r+=`\n\nThis order was cancelled. Would you like to place a new order?`;
-      if(first.status==='Returned')r+=`\n\nThis order was returned. Refunds typically process within 5-7 business days.`;
-      r+=`\n\nIs there anything else I can help with?`;
+      const [oid,items]=entries[0];const first=items[0];const total=items.reduce((s,it)=>s+parseFloat(it.total),0);
+      const statusClass=first.status.toLowerCase();
+      const msgMap={'Processing':'Your order is being processed and will be shipped within 1-2 business days.','Shipped':'Your order is on its way! It should arrive within 2-5 business days.','Delivered':'Your order has been delivered. Enjoy your toys!','Cancelled':'This order was cancelled. Would you like to place a new order?','Returned':'This order was returned. Refunds typically process within 5-7 business days.'};
+      let r=`<div class="order-card"><div class="order-header"><div><div class="order-id">${oid}</div><div class="order-customer"><i class="fas fa-user"></i> ${first.customer_name}</div></div><span class="order-status ${statusClass}">${first.status}</span></div><div class="order-items">`;
+      items.forEach(it=>{r+=`<div class="order-item"><span class="qty">${it.qty}</span><span class="item-name">${it.item_name||'Item'}</span><span class="item-price">€${fmtPrice(it.unit_price)}</span></div>`});
+      r+=`</div><div class="order-total"><span class="total-label">Order Total</span><span class="total-value">€${fmtPrice(total)}</span></div><div class="order-info-row"><i class="fas fa-calendar"></i> ${first.order_date}</div>`;
+      if(first.tracking_number)r+=`<div class="order-info-row"><i class="fas fa-truck"></i> ${first.tracking_number}</div>`;
+      if(first.shipping_address)r+=`<div class="order-info-row"><i class="fas fa-map-pin"></i> ${first.shipping_address}</div>`;
+      if(first.payment_method)r+=`<div class="order-info-row"><i class="fas fa-credit-card"></i> ${first.payment_method}</div>`;
+      if(msgMap[first.status])r+=`<div class="order-msg ${statusClass}">${msgMap[first.status]}</div>`;
+      r+=`</div><div style="margin-top:8px;font-size:.7rem;color:#888">Anything else I can help with?</div>`;
       return r;
     }
-    let r=`I found **${entries.length} orders** for you:\n\n`;
-    entries.forEach(([oid,items])=>{const first=items[0];const total=items.reduce((s,it)=>s+it.total,0);r+=`• **${oid}** — ${first.status} — €${fmtPrice(total)} (${first.order_date})\n`});
-    r+=`\nWould you like details on any specific order?`;
+    let r=`<div style="margin-bottom:6px;font-weight:700">I found <span style="color:#ED1C24">${entries.length} orders</span> for you:</div><div style="display:flex;flex-direction:column;gap:4px">`;
+    entries.forEach(([oid,items])=>{const first=items[0];const total=items.reduce((s,it)=>s+parseFloat(it.total),0);const sc=first.status.toLowerCase();r+=`<div style="display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:8px;padding:6px 10px;border:1px solid rgba(237,28,36,.08)"><span style="font-weight:700;font-size:.72rem">${oid}</span><span class="order-status ${sc}" style="font-size:.58rem">${first.status}</span><span style="color:#ED1C24;font-weight:700;font-size:.75rem">€${fmtPrice(total)}</span><span style="color:#888;font-size:.6rem">${first.order_date}</span></div>`});
+    r+=`</div><div style="margin-top:8px;font-size:.7rem;color:#888">Would you like details on a specific order?</div>`;
     return r;
   }
   if(!results||results.length===0)return "I'm sorry, I couldn't find anything matching that in our catalogue. Could you try asking differently? For example, try \"Lego\", \"board games\", or \"gift for a 6-year-old\".";
@@ -967,7 +1032,7 @@ async function handleCommand(text){
       type='orders';
       const oidMatch=lq.match(/ST-2026-\d+/i);
       if(oidMatch)resource=`toy-mcp://orders/id/${oidMatch[0]}`;
-      else{const nameMatch=lq.match(/for\s+([a-z]+(?:\s+[a-z]+)?)/i);if(nameMatch)resource=`toy-mcp://orders/customer/${nameMatch[1]}`;else resource='toy-mcp://orders'}
+      else{const nameMatch=lq.match(/for\s+(.+)/i);if(nameMatch)resource=`toy-mcp://orders/customer/${nameMatch[1].trim()}`;else resource='toy-mcp://orders'}
     }
     else if(lq.includes('lego')||lq.includes('brick'))resource='toy-mcp://products/cat/LEGO & Building';
     else if(lq.includes('board game')||lq.includes('puzzle')||lq.includes('jenga')||lq.includes('monopoly')||lq.includes('chess'))resource='toy-mcp://products/cat/Board Games & Puzzles';
@@ -983,6 +1048,7 @@ async function handleCommand(text){
     else if(lq.includes('stock')||lq.includes('available')||lq.includes('in stock'))resource='toy-mcp://products/stock';
     else if(lq.includes('gift')||lq.includes('birthday')||lq.includes('present')||lq.includes('recommend')||lq.includes('suggest'))resource='toy-mcp://products/rating';
     else{for(const c of CATEGORIES){if(lq.includes(c.toLowerCase())){resource=`toy-mcp://products/cat/${c}`;break}}}
+    if(type==='products'&&resource==='toy-mcp://products'){const matchingName=orders.find(o=>lq.includes(o.customer_name.toLowerCase()));if(matchingName){type='orders';resource=`toy-mcp://orders/customer/${matchingName.customer_name}`}}
     let results;
     if(type==='orders')results=toyQuery(resource);
     else{
@@ -995,7 +1061,7 @@ async function handleCommand(text){
     }
     await runEngineFlow(q,results,type);
     hideTyping();
-    const reply=await askGroq(q,results,type);
+    const reply=await askOpenAI(q,results,type);
     addMsg(reply,'bot');
     clearEngine();
     addEngineStep('fa-check-circle','Complete','Done','done');
@@ -1019,7 +1085,10 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventD
 // ============================================================
 (async function boot(){
   buildPills();
-  loadEmbeddedData();
+  const loaded = await loadPublishedSheet();
+  if (!loaded) loadEmbeddedData();
+  const source = loaded ? 'Live Google Sheet' : 'Embedded Data';
+  document.getElementById('mcpEmpty').textContent = `${source} — ${products.length} products, ${orders.length} orders loaded`;
   buildCategories();
   buildFeatured();
   buildTestimonials();
